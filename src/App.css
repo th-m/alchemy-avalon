@@ -1,0 +1,108 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  animation: App-logo-spin infinite 20s linear;
+  /* height: 80px; */
+  width: 100%;
+}
+
+.App-header {
+  background-color: #222;
+  height: 150px;
+  padding: 20px;
+  color: white;
+}
+
+.App-title {
+  font-size: 1.5em;
+}
+
+.App-intro {
+  font-size: large;
+}
+.light_text{
+  font-weight: 100;
+}
+
+@keyframes App-logo-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+h2{
+  text-align: center;
+}
+
+.game_container{
+  text-align: center;
+  display: block;
+  width: 100%;
+  max-width: 600px;
+  margin: auto;
+  margin-top: 60px;
+}
+
+.game_container div{
+  margin: 0;
+}
+
+.player_list{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); 
+}
+
+*{
+  transition: all 1s;
+}
+line{
+    stroke:rgba(100,100,100,4);
+    stroke-miterlimit:10;
+}
+
+circle{
+  display: block;
+}
+.rotateMe{
+  transform: rotate(60deg);
+}
+g{
+  transform-origin: 50% 50%;
+}
+.gradient{
+  /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#ea789b+19,2dcbe0+83 */
+  background: #ea789b; /* Old browsers */
+  background: -moz-radial-gradient(center, ellipse cover, #ea789b 19%, #2dcbe0 83%); /* FF3.6-15 */
+  background: -webkit-radial-gradient(center, ellipse cover, #ea789b 19%,#2dcbe0 83%); /* Chrome10-25,Safari5.1-6 */
+  background: radial-gradient(ellipse at center, #ea789b 19%,#2dcbe0 83%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ea789b', endColorstr='#2dcbe0',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+}
+.hexHide{
+  transform: rotate(60deg) scale(0);
+}
+.hexShow{
+  transform:  rotate(0deg) scale(1);
+}
+.hideMe{
+  opacity: 0;
+}
+polygon{
+  transform-origin: 50% 50%;
+}
+.growSquare{
+  transform: scale(2);
+}
+
+svg{
+  width: 100%;
+  max-width: 800px;
+  right: 50%;
+  transform: translate(-50%, 0);
+  left: 50%;
+  position: fixed;
+  z-index: -1;
+}
+/* .hexShow polygon{
+  back
+} */
