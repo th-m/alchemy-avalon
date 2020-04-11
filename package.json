@@ -3,14 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@material-ui/core": "^4.9.9",
+    "@types/jest": "^25.2.1",
+    "@types/node": "^13.11.1",
+    "@types/socket.io-client": "^1.4.32",
     "express": "4.16.3",
-    "material-ui": "^1.0.0-beta.47",
+    "firebase": "^7.14.0",
     "path": "0.12.7",
-    "react": "^0.0.0-235a6c4af",
-    "react-dom": "^0.0.0-235a6c4af",
-    "react-scripts": "1.1.4",
+    "react": "16.8.6",
+    "react-dom": "16.8.6",
+    "react-scripts": "3.4.0",
     "socket.io": "2.1.0",
-    "socket.io-client": "2.1.0"
+    "socket.io-client": "2.3.0",
+    "typescript": "^3.8.3"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -20,5 +25,21 @@
   },
   "engines": {
     "node": "v8.12.0"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@types/react": "^16.9.34",
+    "@types/react-dom": "^16.9.6"
   }
 }
