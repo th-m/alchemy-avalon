@@ -3,6 +3,7 @@ import { Paper, Typography, TextField, Button } from '@material-ui/core'
 import { GameContext, GameProvider } from './provider'
 import { CharacterCard } from './character-card.component'
 import { WaitingRoom } from './waiting-room.component'
+import { GameInput } from './game-input.component'
 import '../../App.css';
 
 const suggestedSettup = {
@@ -18,39 +19,11 @@ const centerPoint = [160, 140];
 const points = [[127, 82.4], [193.3, 82.4], [226.5, 139.9], [193.3, 197.4], [127, 197.4], [93.8, 139.9]];
 const squarePoints = [[127, 82.4], [193.3, 82.4], [193.3, 139.9], [193.3, 197.4], [127, 197.4], [127, 139.9]];
 
-
-const Input = ({ step }) => {
-  const ctx = useContext(GameContext);
-  return (
-    <Paper className="game_container" elevation={4}>
-      <Typography variant="h6" component="h3">
-        {(step === "secret" ? "Enter The Secret" : "What Is Your Name")}
-      </Typography>
-      <TextField
-        id={step}
-        fullWidth
-        required
-        // onKeyDown={ctx.handleKeyDown}
-        onChange={ctx.handleInputChange}
-        className="marg_0"
-        margin="normal"
-        value={ctx.state[step]}
-      />
-      <Button variant="contained" color="primary" fullWidth onClick={ctx.sendMessage}>
-        Enter
-      </Button>
-    </Paper>
-  )
-}
-
-
 const gameStateRouter = (param) => {
   switch (param) {
     case 1:
     case 2:
-      return ([
-        <Input key="i am unique" step={(param === 1 ? "secret" : "name")} />,
-      ]);
+      return <GameInput step={param} />;
     case 3:
       return ([
         <WaitingRoom />,
@@ -67,7 +40,6 @@ const Game = () => {
 
     <>
       <svg version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 320 280">
-        {/* // style={{ enableBackground: "new 0 0 320 280" }} > */}
         <g className={(ctx.state.step < 4 ? '' : 'hideMe')}>
           <g className={(ctx.state.step >= 3 ? '' : 'rotateMe')}>
             {points.map((x, i) => <line key={"l" + i} id={"l" + i} x1={centerPoint[0]} y1={centerPoint[1]} x2={x[0]} y2={x[1]} />)}
