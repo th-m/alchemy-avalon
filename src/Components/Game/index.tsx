@@ -3,6 +3,7 @@ import { GameContext, GameProvider } from './provider'
 import { CharacterCard } from './character-card.component'
 import { WaitingRoom } from './waiting-room.component'
 import { GameSecret } from './game-secret.component'
+import { FBLogin } from './../facebook-login.component'
 import '../../App.css';
 
 const suggestedSettup = {
@@ -21,9 +22,9 @@ const squarePoints = [[127, 82.4], [193.3, 82.4], [193.3, 139.9], [193.3, 197.4]
 const gameStateRouter = (param) => {
   switch (param) {
     case 1:
-
+      return <FBLogin />
     case 2:
-      return <GameSecret />;
+      return <GameSecret />
     case 3:
       return <WaitingRoom />
     default:

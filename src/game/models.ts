@@ -16,6 +16,8 @@ export interface Character {
 }
 
 export interface Player {
-    name: string;
-    character: Character;
+    name: string | null;
+    photo: string | null;
+    email: string | null;
+    uid: string;
 }
