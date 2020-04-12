@@ -1,9 +1,8 @@
 import React, { Component, useContext } from 'react'
-import { Paper, Typography, TextField, Button } from '@material-ui/core'
 import { GameContext, GameProvider } from './provider'
 import { CharacterCard } from './character-card.component'
 import { WaitingRoom } from './waiting-room.component'
-import { GameInput } from './game-input.component'
+import { GameSecret } from './game-secret.component'
 import '../../App.css';
 
 const suggestedSettup = {
@@ -22,12 +21,11 @@ const squarePoints = [[127, 82.4], [193.3, 82.4], [193.3, 139.9], [193.3, 197.4]
 const gameStateRouter = (param) => {
   switch (param) {
     case 1:
+
     case 2:
-      return <GameInput step={param} />;
+      return <GameSecret />;
     case 3:
-      return ([
-        <WaitingRoom />,
-      ]);
+      return <WaitingRoom />
     default:
       return null;
 
@@ -37,7 +35,6 @@ const gameStateRouter = (param) => {
 const Game = () => {
   const ctx = useContext(GameContext);
   return (
-
     <>
       <svg version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 320 280">
         <g className={(ctx.state.step < 4 ? '' : 'hideMe')}>
@@ -72,7 +69,6 @@ const Game = () => {
 
       {gameStateRouter(ctx.state.step)}
     </>
-
   )
 }
 

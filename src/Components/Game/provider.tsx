@@ -1,43 +1,48 @@
-import React, { useReducer, createContext, Dispatch } from "react";
-import { OptionalCharacters, Character } from "../../game/models";
-
+import React, { useReducer, createContext, Dispatch, useEffect } from "react";
+import { OptionalCharacters, Character, Player } from "../../game/models";
+import { createGame, getGame } from "../../firebase/actions";
+import { to } from '../../utils';
 interface ContextState {
     optionalCharacters: OptionalCharacters[];
     selectedCharacters: OptionalCharacters[];
-    name: string;
     secret: string;
     character: Character;
-    players: string[];
-    alert: string;
-    animateCard: boolean;
+    players: {
+        [key: string]: Player;
+    };
     step: number;
 }
 
 interface ContextInterface {
     state: ContextState,
     dispatch: Dispatch<Actions>;
-    startGame: () => void;
-    handleInputChange: (event: any) => void,
-    sendMessage: () => void,
 }
 
-enum ActionTypes {
-    addCharacterToList = "ADD_CHARACTER_TO_LIST",
-    setSecret = "SET_SECRET",
-    setStep = "SET_STEP",
-}
 
 interface AddCharacterToList {
-    type: ActionTypes.addCharacterToList
-    payload: OptionalCharacters
+    type: "ADD_CHARACTER_TO_LIST";
+    payload: OptionalCharacters;
+}
+interface SetKeyString {
+    type: "SET_SECRET";
+    payload: string;
 }
 
-type Actions = AddCharacterToList
+interface SetCreator {
+    type: "SET_CREATOR";
+    payload: true;
+}
+
+type Actions = AddCharacterToList | SetKeyString | SetCreator
 
 function reducer(state: ContextState, action: Actions) {
     switch (action.type) {
-        case ActionTypes.addCharacterToList:
+        case "ADD_CHARACTER_TO_LIST":
             return { ...state };
+        case "SET_SECRET":
+            return { ...state, secret: action.payload };
+        case "SET_SECRET":
+            return { ...state, isCreator: action.payload };
         default:
             return state;
     }
@@ -46,40 +51,42 @@ function reducer(state: ContextState, action: Actions) {
 const initState: ContextState = {
     optionalCharacters: [OptionalCharacters.merlin, OptionalCharacters.percival, OptionalCharacters.knight, OptionalCharacters.knight, OptionalCharacters.knight, OptionalCharacters.knight, OptionalCharacters.mordred, OptionalCharacters.morgana, OptionalCharacters.minion, OptionalCharacters.minion],
     selectedCharacters: [],
-    name: '',
     secret: '',
     character: {
         name: '',
         alignment: '',
-        known: '',
+        known: {}
     },
-    players: [],
-    alert: '',
-    animateCard: false,
+    players: {},
     step: 1,
 }
 
 export const GameContext = createContext<ContextInterface>({
     state: { ...initState },
     dispatch: () => { return }, // This will be updated by the reducer
-    startGame: () => { return },
-    handleInputChange: (event) => { return },
-    sendMessage: () => { return },
+
 });
 
 export const GameProvider = ({ children }) => {
     const [state, dispatch] = useReducer(reducer, initState)
-    const startGame = () => {
-        // firebase action to start game
-    }
-    const handleInputChange = (event) => {
 
+    const asyncGetGame = async () => {
+        const gameData = await (await to(getGame(state.secret))).val();
+        if (!gameData) {
+            dispatch({ type: "SET_CREATOR", payload: true })
+        }
+        if (gameData?.isActive) {
+            console.log('game is already active');
+        }
+        // console.log(gameData);
     }
-    const sendMessage = () => {
 
-    }
+    useEffect(() => {
+        asyncGetGame()
+    }, [state.secret]);
+    console.log(state);
     return (
-        <GameContext.Provider value={{ state, dispatch, startGame, handleInputChange, sendMessage }}>
+        <GameContext.Provider value={{ state, dispatch }}>
             {children}
         </GameContext.Provider>
     )

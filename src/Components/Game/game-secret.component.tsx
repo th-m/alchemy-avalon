@@ -1,9 +1,11 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import { TextField, Button } from '@material-ui/core'
 import { GameContext, GameProvider } from './provider'
 
-export const GameInput = ({ step }) => {
+export const GameSecret = () => {
     const ctx = useContext(GameContext);
+    const [value, setValue] = useState('')
+    console.log(value);
     return (
         <div style={{
             position: 'absolute',
@@ -15,19 +17,18 @@ export const GameInput = ({ step }) => {
             height: '300px',
         }}>
             <TextField
-                id={step}
                 fullWidth
                 required
-                label={(step === 1 ? "Enter The Game Secret" : "What Is Your Name")}
-                onChange={ctx.handleInputChange}
+                label={"Enter The Game Secret"}
+                onChange={(event) => setValue(event.target.value)}
                 className="marg_0"
                 margin="normal"
-                value={ctx.state[step]}
+                value={value}
             />
             <div style={{ marginTop: 10 }}>
-                <Button variant="contained" color="primary" fullWidth onClick={ctx.sendMessage}>
+                <Button variant="contained" color="primary" fullWidth onClick={() => ctx.dispatch({ type: "SET_SECRET", payload: value })}>
                     Enter
-          </Button>
+                </Button>
             </div>
         </div >
     )

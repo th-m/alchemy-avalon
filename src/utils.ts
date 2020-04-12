@@ -1,0 +1,1 @@
+export const to = <T = any>(promise: Promise<T>) => promise.then()

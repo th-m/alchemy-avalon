@@ -12,5 +12,10 @@ export enum OptionalCharacters {
 export interface Character {
     name: string;
     alignment: string;
-    known: any;
+    known: Object
+}
+
+export interface Player {
+    name: string;
+    character: Character;
 }
