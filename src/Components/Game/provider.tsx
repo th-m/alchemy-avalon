@@ -1,9 +1,8 @@
 import React, { useReducer, createContext, Dispatch, useEffect } from "react";
 import { OptionalCharacters, Character, Player } from "../../game/models";
-import { createGame, getGame, joinGame } from "../../firebase/actions";
+import { createGame, getGame, joinGame, listenForCharacter } from "../../firebase/actions";
 import { to } from '../../utils';
 import firebase from "firebase";
-import { auth } from "../../firebase/connect.firebase";
 interface ContextState {
     optionalCharacters: OptionalCharacters[];
     selectedCharacters: OptionalCharacters[];
@@ -39,8 +38,12 @@ interface SetPlayer {
     type: "SET_STEP";
     payload: number;
 }
+interface SetCharacter {
+    type: "SET_CHARACTER";
+    payload: Character;
+}
 
-type Actions = AddCharacterToList | SetKeyString | SetCreator | SetPlayer
+type Actions = AddCharacterToList | SetKeyString | SetCreator | SetPlayer | SetCharacter
 
 function reducer(state: ContextState, action: Actions) {
     switch (action.type) {
@@ -52,6 +55,8 @@ function reducer(state: ContextState, action: Actions) {
             return { ...state, isCreator: action.payload };
         case "SET_STEP":
             return { ...state, step: action.payload };
+        case "SET_CHARACTER":
+            return { ...state, character: action.payload };
         default:
             return state;
     }
@@ -82,6 +87,7 @@ export const GameProvider = ({ children }) => {
     const checkSecret = async (secret) => {
         const gameData = await (await to(getGame(secret))).val();
 
+        console.log(gameData);
         if (!gameData) {
             createGame(secret)
             dispatch({ type: "SET_CREATOR", payload: true })
@@ -104,6 +110,20 @@ export const GameProvider = ({ children }) => {
             }
         }
     }
+
+    const handleCharacterUpdate = (characterSnapshot) => {
+        dispatch({ type: "SET_CHARACTER", payload: characterSnapshot })
+    }
+
+    useEffect(() => {
+        if (state.secret && state.step >= 3) {
+            const currentUser = firebase.auth().currentUser;
+            const listner = listenForCharacter(state.secret, currentUser?.uid);
+            listner.on("value", handleCharacterUpdate)
+            return listner.off("value")
+
+        }
+    }, [state.secret, state.step])
 
     useEffect(() => {
         if (state.secret) {

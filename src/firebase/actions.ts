@@ -1,6 +1,10 @@
 import { auth, firebase } from './connect.firebase'
 import { OptionalCharacters } from '../game/models';
 
+export function listenForCharacter(gameKey, uid) {
+    return firebase.database().ref(`games/${gameKey}/characters/${uid}`);
+}
+
 export async function getGame(gameKey: string) {
     return firebase.database().ref(`games/${gameKey}`).once('value', snap => snap.val());
 }

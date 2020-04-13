@@ -1,11 +1,10 @@
 import React, { useContext, useState } from 'react'
 import { TextField, Button } from '@material-ui/core'
-import { GameContext, GameProvider } from './provider'
+import { GameContext } from './provider'
 
 export const GameSecret = () => {
     const ctx = useContext(GameContext);
     const [value, setValue] = useState('')
-    console.log(value);
     return (
         <div style={{
             position: 'absolute',
