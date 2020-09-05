@@ -1,6 +1,7 @@
 import React, { Component, Fragment, useState } from "react"
 import { usePlayerUtils } from './players'
-import { getGame } from "../../firebase/actions";
+import { getGame, setGameDev } from "../../firebase/actions";
+import stubGame from './stub.game.json'
 
 export const DevUtils = () => {
     const { havePlayersJoin, getCharacter } = usePlayerUtils()
@@ -12,6 +13,11 @@ export const DevUtils = () => {
         console.log({ gameInfo })
         console.log(JSON.stringify(gameInfo))
     }
+
+    const setGame = async (secret) => {
+        setGameDev(secret, stubGame);
+    }
+
     return (
         <div style={{
             display: 'flex',
@@ -32,10 +38,13 @@ export const DevUtils = () => {
                 </button>
             </div>
             <div>
-
-                <input type="text" value={uid} onChange={e => setUid(e.target.value)} />
                 <button onClick={() => getGameData("test_1")}>
                     get Game
+                </button>
+            </div>
+            <div>
+                <button onClick={() => setGame("test_1")}>
+                    set Game
                 </button>
             </div>
         </div>

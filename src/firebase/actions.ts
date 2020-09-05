@@ -82,6 +82,10 @@ export function joinGameDev(gameKey: string, player) {
     _joinGame(gameKey, player);
 }
 
+export function setGameDev(gameKey: string, d) {
+    firebase.database().ref(`games/${gameKey}`).update(d);
+}
+
 export function startGame(gameKey: string) {
     const status: GameStatus = "active";
     firebase.database().ref(`games/${gameKey}`).update({
