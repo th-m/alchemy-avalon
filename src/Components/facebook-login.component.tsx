@@ -1,48 +1,23 @@
-import React from 'react'
-import fb from './../assets/imgs/fb.png'
-import { auth, firebase } from '../firebase/connect.firebase';
+import React from 'react';
+import { firebase, auth } from '../firebase/connect.firebase';
+import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 
-const provider = new firebase.auth.FacebookAuthProvider();
-
-export const fbSignUp = () => {
-    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-        auth.signInWithPopup(provider).then(function (result) {
-            console.log('logged in');
-        }).catch(function (error) {
-            console.log({ error });
-        });
-    } else {
-        auth.signInWithRedirect(provider);
-    }
-}
-
-export const FBLogin = () => {
+const uiConfig = {
+    // Popup signin flow rather than redirect flow.
+    signInFlow: 'popup',
+    // Redirect to /signedIn after sign in is successful. Alternatively you can provide a callbacks.signInSuccess function.
+    signInSuccessUrl: '/',
+    // We will display Google and Facebook as auth providers.
+    signInOptions: [
+        firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+        firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+        // firebase.auth.PhoneAuthProvider.PROVIDER_ID
+    ]
+};
+export const Auth = () => {
     return (
-        <button style={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            marginTop: '3px',
-            marginLeft: '-100px',
-            width: '200px',
-            height: '50px',
-            border: 'transparent',
-            borderRadius: 8,
-            display: 'flex',
-            justifyContent: 'center',
-            backgroundColor: 'transparent'
-
-        }}
-            onClick={fbSignUp}
-        >
-            <div style={{
-                display: 'flex',
-                alignItems: 'center',
-            }}>
-
-                <img style={{ width: 35 }} src={fb} alt="Login with Facebook" />
-                <span style={{ marginLeft: 5 }}> Login with Facebook</span>
-            </div>
-        </button>
-    )
+        <div>
+            <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={auth} />
+        </div>
+    );
 }

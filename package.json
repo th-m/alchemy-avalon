@@ -4,13 +4,19 @@
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.9.9",
+    "@material-ui/icons": "^4.9.1",
+    "@material-ui/styles": "^4.9.10",
+    "array-move": "^3.0.0",
     "firebase": "^7.14.0",
     "react": "16.8.6",
     "react-dom": "16.8.6",
+    "react-firebaseui": "^4.1.0",
     "react-scripts": "3.4.0",
+    "react-sortable-hoc": "^1.11.0",
     "typescript": "^3.8.3"
   },
   "scripts": {
+    "start:local": "REACT_APP_ENV=local react-scripts start",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",

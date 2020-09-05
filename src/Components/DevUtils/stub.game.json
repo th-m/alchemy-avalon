@@ -1,0 +1,241 @@
+{
+    "captainOrder": [
+        "3",
+        "4",
+        "VREPBESDUVXESwthMRF2osa028J3",
+        "2",
+        "7",
+        "1",
+        "6",
+        "5",
+        "8"
+    ],
+    "characters": {
+        "1": {
+            "alignment": "good",
+            "characterName": "rebel",
+            "player": {
+                "displayName": "danny",
+                "email": "danny@p1.codes",
+                "photoURL": "https://images.unsplash.com/photo-1497752531616-c3afd9760a11?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&w=1000&q=80",
+                "uid": "1"
+            },
+            "playerID": "1"
+        },
+        "2": {
+            "alignment": "evil",
+            "characterName": "agent",
+            "player": {
+                "displayName": "ricky",
+                "email": "ricky@p2.codes",
+                "photoURL": "https://image.shutterstock.com/image-photo/elephant-on-sunset-national-park-260nw-1182593230.jpg",
+                "uid": "2"
+            },
+            "playerID": "2"
+        },
+        "3": {
+            "alignment": "good",
+            "characterName": "rebel",
+            "player": {
+                "displayName": "tommy",
+                "email": "tommy@p3.codes",
+                "photoURL": "https://cdn.vox-cdn.com/thumbor/6oEPJ9s5H9rzubYWS-LKBWhNE9k=/0x0:3000x2225/1200x800/filters:focal(1082x339:1562x819)/cdn.vox-cdn.com/uploads/chorus_image/image/66609943/GettyImages_137497593.0.jpg",
+                "uid": "3"
+            },
+            "playerID": "3"
+        },
+        "4": {
+            "alignment": "good",
+            "characterName": "intelligencer",
+            "knows": [
+                {
+                    "alignment": "evil",
+                    "characterName": "agent",
+                    "player": {
+                        "displayName": "ricky",
+                        "email": "ricky@p2.codes",
+                        "photoURL": "https://image.shutterstock.com/image-photo/elephant-on-sunset-national-park-260nw-1182593230.jpg",
+                        "uid": "2"
+                    }
+                }
+            ],
+            "player": {
+                "displayName": "abbey",
+                "email": "abbey@p4.codes",
+                "photoURL": "https://www.marylandzoo.org/wp-content/uploads/2018/04/lemuranimaheader3.jpg",
+                "uid": "4"
+            },
+            "playerID": "4"
+        },
+        "5": {
+            "alignment": "evil",
+            "characterName": "deepfake",
+            "player": {
+                "displayName": "milly",
+                "email": "milly@p5.codes",
+                "photoURL": "https://cdn.hswstatic.com/gif/animal-stereotype-orig.jpg",
+                "uid": "5"
+            },
+            "playerID": "5"
+        },
+        "6": {
+            "alignment": "good",
+            "characterName": "rebel",
+            "player": {
+                "displayName": "bethy",
+                "email": "bethy@p6.codes",
+                "photoURL": "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQBPdFHPaGebRk1P-UaSRoamb_qhx-ajvqIKA&usqp=CAU",
+                "uid": "6"
+            },
+            "playerID": "6"
+        },
+        "7": {
+            "alignment": "good",
+            "characterName": "rebel",
+            "player": {
+                "displayName": "billy",
+                "email": "billy@p7.codes",
+                "photoURL": "https://media.cntraveler.com/photos/5d8132bab18b620008ca13a0/master/pass/Cape-Buffalo_GettyImages-508555262.jpg",
+                "uid": "7"
+            },
+            "playerID": "7"
+        },
+        "8": {
+            "alignment": "evil",
+            "characterName": "chancellor",
+            "knows": [
+                {
+                    "alignment": "evil",
+                    "characterName": "agent",
+                    "player": {
+                        "displayName": "ricky",
+                        "email": "ricky@p2.codes",
+                        "photoURL": "https://image.shutterstock.com/image-photo/elephant-on-sunset-national-park-260nw-1182593230.jpg",
+                        "uid": "2"
+                    }
+                }
+            ],
+            "player": {
+                "displayName": "sammy",
+                "email": "sammy@p8.codes",
+                "photoURL": "https://scx1.b-cdn.net/csz/news/800/2019/canwereallyk.jpg",
+                "uid": "8"
+            },
+            "playerID": "8"
+        },
+        "VREPBESDUVXESwthMRF2osa028J3": {
+            "alignment": "good",
+            "characterName": "confidant",
+            "knows": [
+                {
+                    "alignment": "good",
+                    "characterName": "intelligencer",
+                    "player": {
+                        "displayName": "abbey",
+                        "email": "abbey@p4.codes",
+                        "photoURL": "https://www.marylandzoo.org/wp-content/uploads/2018/04/lemuranimaheader3.jpg",
+                        "uid": "4"
+                    }
+                },
+                {
+                    "alignment": "good",
+                    "characterName": "intelligencer",
+                    "player": {
+                        "displayName": "milly",
+                        "email": "milly@p5.codes",
+                        "photoURL": "https://cdn.hswstatic.com/gif/animal-stereotype-orig.jpg",
+                        "uid": "5"
+                    }
+                }
+            ],
+            "player": {
+                "displayName": "Thomas Valadez",
+                "email": "thomvaladez@gmail.com",
+                "photoURL": "https://lh3.googleusercontent.com/a-/AOh14GiELNqs3nlfUDU34ZJvKKhTRtXzT25Uyb_3S73_",
+                "uid": "VREPBESDUVXESwthMRF2osa028J3"
+            },
+            "playerID": "VREPBESDUVXESwthMRF2osa028J3"
+        }
+    },
+    "createdAt": "2020-09-05T04:55:37.503Z",
+    "creatorUid": "VREPBESDUVXESwthMRF2osa028J3",
+    "currentCaptain": "3",
+    "currentMission": 1,
+    "missions": [
+        null,
+        {
+            "attempt": 1,
+            "captain": [
+                null,
+                {
+                    "displayName": "tommy",
+                    "email": "tommy@p3.codes",
+                    "photoURL": "https://cdn.vox-cdn.com/thumbor/6oEPJ9s5H9rzubYWS-LKBWhNE9k=/0x0:3000x2225/1200x800/filters:focal(1082x339:1562x819)/cdn.vox-cdn.com/uploads/chorus_image/image/66609943/GettyImages_137497593.0.jpg",
+                    "uid": "3"
+                }
+            ],
+            "memberCount": 3,
+            "status": "planning"
+        }
+    ],
+    "players": {
+        "1": {
+            "displayName": "danny",
+            "email": "danny@p1.codes",
+            "photoURL": "https://images.unsplash.com/photo-1497752531616-c3afd9760a11?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&w=1000&q=80",
+            "uid": "1"
+        },
+        "2": {
+            "displayName": "ricky",
+            "email": "ricky@p2.codes",
+            "photoURL": "https://image.shutterstock.com/image-photo/elephant-on-sunset-national-park-260nw-1182593230.jpg",
+            "uid": "2"
+        },
+        "3": {
+            "displayName": "tommy",
+            "email": "tommy@p3.codes",
+            "photoURL": "https://cdn.vox-cdn.com/thumbor/6oEPJ9s5H9rzubYWS-LKBWhNE9k=/0x0:3000x2225/1200x800/filters:focal(1082x339:1562x819)/cdn.vox-cdn.com/uploads/chorus_image/image/66609943/GettyImages_137497593.0.jpg",
+            "uid": "3"
+        },
+        "4": {
+            "displayName": "abbey",
+            "email": "abbey@p4.codes",
+            "photoURL": "https://www.marylandzoo.org/wp-content/uploads/2018/04/lemuranimaheader3.jpg",
+            "uid": "4"
+        },
+        "5": {
+            "displayName": "milly",
+            "email": "milly@p5.codes",
+            "photoURL": "https://cdn.hswstatic.com/gif/animal-stereotype-orig.jpg",
+            "uid": "5"
+        },
+        "6": {
+            "displayName": "bethy",
+            "email": "bethy@p6.codes",
+            "photoURL": "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQBPdFHPaGebRk1P-UaSRoamb_qhx-ajvqIKA&usqp=CAU",
+            "uid": "6"
+        },
+        "7": {
+            "displayName": "billy",
+            "email": "billy@p7.codes",
+            "photoURL": "https://media.cntraveler.com/photos/5d8132bab18b620008ca13a0/master/pass/Cape-Buffalo_GettyImages-508555262.jpg",
+            "uid": "7"
+        },
+        "8": {
+            "displayName": "sammy",
+            "email": "sammy@p8.codes",
+            "photoURL": "https://scx1.b-cdn.net/csz/news/800/2019/canwereallyk.jpg",
+            "uid": "8"
+        },
+        "VREPBESDUVXESwthMRF2osa028J3": {
+            "displayName": "Thomas Valadez",
+            "email": "thomvaladez@gmail.com",
+            "photoURL": "https://lh3.googleusercontent.com/a-/AOh14GiELNqs3nlfUDU34ZJvKKhTRtXzT25Uyb_3S73_",
+            "uid": "VREPBESDUVXESwthMRF2osa028J3"
+        }
+    },
+    "playersActions": {
+        "3": "select team"
+    },
+    "status": "active"
+}

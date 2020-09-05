@@ -7,6 +7,18 @@
   width: 50px;
 }
 
+img[class*="play"]{
+  width: 40px;
+  transition: all 1.5s ease;
+}
+.play-disable{
+  filter: grayscale(100%);
+} 
+
+.play-able{
+  filter: grayscale(0);
+}
+
 .App-header {
   background-color: #222;
   height: 150px;
@@ -48,11 +60,13 @@ h2{
 }
 
 .player_list{
+  transition: all 1s;
   display: grid;
   grid-template-columns: repeat(3, 1fr); 
+  grid-gap: 8px
 }
 
-*{
+#alchemy_background * {
   transition: all 1s;
 }
 line{
@@ -92,8 +106,15 @@ polygon{
 .growSquare{
   transform: scale(2);
 }
-
-svg{
+.center_children{
+  height: 100%;
+  width: 100%;
+  max-width: 800px;
+  margin: auto;
+  display: grid; 
+  place-Items: center;
+}
+#alchemy_background{
   height:calc(100vh - 74px);
   width: 100%;
   max-width: 800px;
@@ -103,6 +124,15 @@ svg{
   position: fixed;
   z-index: -1;
 }
-/* .hexShow polygon{
-  back
-} */
+
+.character_svg{
+  height:100vh;
+  width: 100%;
+  /* max-width: 424px; */
+  right: 50%;
+  transform: translate(-50%, 0);
+  left: 50%;
+  position: fixed;
+  z-index: -1; 
+}
+ /*  #Intelligencer, #Confidant, #Rebel, #Chancellor, #Deepfake, #Renegade, #Agent, #Assassin, */ 
