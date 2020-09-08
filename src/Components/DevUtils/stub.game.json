@@ -160,7 +160,12 @@
     "createdAt": "2020-09-05T04:55:37.503Z",
     "creatorUid": "VREPBESDUVXESwthMRF2osa028J3",
     "currentCaptain": "3",
-    "currentMission": 1,
+    "mission": {
+        "attempt": 1,
+        "number": 1,
+        "memberCount": 3,
+        "status": "planning"
+    },
     "missions": [
         null,
         {

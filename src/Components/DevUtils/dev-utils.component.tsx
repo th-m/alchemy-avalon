@@ -1,6 +1,6 @@
 import React, { Component, Fragment, useState } from "react"
 import { usePlayerUtils } from './players'
-import { getGame, setGameDev } from "../../firebase/actions";
+import { getGame, setGameDev, testNextCaptain } from "../../firebase/actions";
 import stubGame from './stub.game.json'
 
 export const DevUtils = () => {
@@ -45,6 +45,11 @@ export const DevUtils = () => {
             <div>
                 <button onClick={() => setGame("test_1")}>
                     set Game
+                </button>
+            </div>
+            <div>
+                <button onClick={() => testNextCaptain()}>
+                    next captain
                 </button>
             </div>
         </div>

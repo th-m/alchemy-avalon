@@ -74,7 +74,6 @@ const sendPlayerIn = player => {
 const havePlayersJoin = async () => {
     for (const player of Object.values(players)) {
         await sendPlayerIn(player)
-        // console.log(player, "joined")
     }
 }
 

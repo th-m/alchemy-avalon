@@ -9,13 +9,29 @@ export const cleanString = (dirty: String) => {
     return dirty.replace(/[|&;$%@"#<>.()+,]/g, "");
 }
 
-export const setMissionMembers = (opts: SetMissionMembersReq) => {
+export const setMissionMembers = async (opts: SetMissionMembersReq) => {
     const url = 'http://localhost:5001/alchemy-f82c5/us-central1/setMissionMembers'
+
     fetch(url, {
-        method: 'post',
-        body: JSON.stringify(opts)
+        method: 'POST',
+        body: JSON.stringify(opts),
+        mode: 'no-cors',
+        headers: {
+            'Content-Type': 'application/json'
+        }
     }).then(function (response) {
-        return response.json();
+        if (response.status !== 201) {
+            console.warn('something bad happened with the mission')
+        }
+    }).then(function (data) {
+        console.log('set mission members response:', data);
+    });
+}
+
+export const testNextCaptain = () => {
+    const url = 'http://localhost:5001/alchemy-f82c5/us-central1/nextCaptain'
+    fetch(url).then(function (response) {
+        return response?.json() ?? {};
     }).then(function (data) {
         console.log('set mission members response:', data);
     });
@@ -23,7 +39,7 @@ export const setMissionMembers = (opts: SetMissionMembersReq) => {
 
 type UID = string;
 interface ListenKeys {
-    [key: string]: string;
+    [key: string]: string | number;
 }
 
 type ListenCallBack<T> = (t: T) => void;
@@ -32,13 +48,19 @@ export function listenForCharacter({ gameKey, uid }: ListenKeys, cb: ListenCallB
 }
 
 export function listenForPlayerAction({ gameKey, uid }: ListenKeys, cb: ListenCallBack<PlayerAction>) {
-    return listen(`games/${gameKey}/playerActions/${uid}`, cb)
+    return listen(`games/${gameKey}/playersActions/${uid}`, cb)
+}
+
+export function listenForGameAction({ gameKey }: ListenKeys, cb: ListenCallBack<PlayerAction>) {
+    return listen(`games/${gameKey}/`, cb)
 }
 
 export function listenForCaptain({ gameKey }: ListenKeys, cb: ListenCallBack<UID>) {
-    return listen(`games/${gameKey}/currentCaptain`, cb)
+    return listen(`games/${gameKey}/captain`, cb)
 }
-export function listenForRoundMissionMembers({ gameKey }: ListenKeys, cb: ListenCallBack<any>) {
+
+
+export function listenForMission({ gameKey }: ListenKeys, cb: ListenCallBack<any>) {
     return listen(`games/${gameKey}/mission`, cb);
 }
 
@@ -61,6 +83,9 @@ export async function getUsersGame(uid: string) {
     return await getValue(`usersGames/${uid}`)
 }
 
+export async function getActiveMission(gameKey: string, activeMission: number) {
+    return await getValue(`games/${gameKey}/missions/${activeMission}`)
+}
 export function joinGame(gameKey: string) {
     if (auth.currentUser) {
         _joinGame(gameKey, auth.currentUser);

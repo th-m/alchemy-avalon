@@ -1,15 +1,7 @@
 import React, { useReducer, createContext, Dispatch, useEffect } from "react";
-import { createGame, getGame, joinGame, listenForCharacter, listenForPlayers, getCharacter, listenForGameStatus, listenForCaptain, listenForRoundMissionMembers, listenForPlayerAction } from "./firebase/actions";
+import { createGame, getGame, joinGame, listenForCharacter, listenForPlayers, getCharacter, listenForGameStatus, listenForCaptain, listenForMission, listenForPlayerAction, getActiveMission } from "./firebase/actions";
 import firebase from "firebase";
-import { Players, Player, Characters, Game, GameStatus, MissionStatuses, Alignments, KnownCharacter, PlayerAction } from "../../schemas";
-
-interface Mission {
-    membersCount?: number,
-    members?: Players,
-    number?: number,
-    attempt?: number,
-    status?: MissionStatuses | '',
-}
+import { Players, Player, Characters, Game, GameStatus, MissionStatuses, Alignments, KnownCharacter, PlayerAction, GameMissionInfo } from "../../schemas";
 
 export interface Character {
     characterName: keyof typeof Characters,
@@ -26,7 +18,9 @@ interface ContextState {
     players: Players;
     setupStep: number;
     captain: string;
-    mission: Mission
+    mission: GameMissionInfo;
+    missionMembers: Players;
+    activeMission: number;
 }
 
 interface ContextInterface {
@@ -75,16 +69,21 @@ interface RemovePlayer {
 
 interface UpdateMissionInfo {
     type: "SET_UPDATE_MISSION";
-    payload: Mission;
+    payload: GameMissionInfo;
 }
 
-interface PlayerActoinInfo {
+interface PlayerActionInfo {
     type: "PLAYER_ACTION";
     payload: PlayerAction;
 }
 
-type Actions = AddCharacterToList | SetKeyString | SetCreator | SetPlayer | SetCharacter | AddPlayer | RemovePlayer | SetCaptain | UpdateMissionInfo | PlayerActoinInfo
+interface AddMissionMember {
+    type: "SET_MISSION_MEMBERS";
+    payload: Players;
+}
 
+
+type Actions = AddCharacterToList | SetKeyString | SetCreator | SetPlayer | SetCharacter | AddPlayer | RemovePlayer | SetCaptain | UpdateMissionInfo | PlayerActionInfo | AddMissionMember
 
 const spreadPlayers = (playerState: Players, player: Player) => ({ ...playerState, ...{ [player.uid]: player } })
 const removePlayer = (playerState: Players, player: Player) => Object.values(playerState)
@@ -114,7 +113,9 @@ function reducer(state: ContextState, action: Actions) {
         case "SET_CAPTAIN":
             return { ...state, captain: action.payload };
         case "SET_UPDATE_MISSION":
-            return { ...state, mission: { ...state.mission, ...action.payload } };
+            return { ...state, mission: action.payload };
+        case "SET_MISSION_MEMBERS":
+            return { ...state, missionMembers: action.payload };
         case "PLAYER_ACTION":
             return { ...state, action: action.payload };
         default:
@@ -129,12 +130,13 @@ const initState: ContextState = {
     players: {},
     setupStep: 1,
     mission: {
-        status: '',
+        status: 'planning',
         number: 0,
         attempt: 0,
-        membersCount: 0,
-        members: {},
-    }
+        memberCount: 0,
+    },
+    missionMembers: {},
+    activeMission: 0,
 }
 
 export const GameContext = createContext<ContextInterface>({
@@ -243,9 +245,8 @@ export const GameProvider = ({ children }) => {
         dispatch({ type: "SET_CAPTAIN", payload: uuid })
     }
 
-    const handleRoundMembersUpdate = (membersCount) => {
-        const m: Mission = { membersCount }
-        dispatch({ type: "SET_UPDATE_MISSION", payload: m })
+    const handleRoundMembersUpdate = (missionInfo: GameMissionInfo) => {
+        dispatch({ type: "SET_UPDATE_MISSION", payload: missionInfo })
     }
 
     useEffect(() => {
@@ -254,7 +255,7 @@ export const GameProvider = ({ children }) => {
             if (state.secret && currentUser?.uid) {
                 const characterListener = listenForCharacter({ gameKey: state.secret, uid: currentUser?.uid }, handleCharacterUpdate);
                 const captainListener = listenForCaptain({ gameKey: state.secret }, handleCaptainUpdate);
-                const missionMembersListener = listenForRoundMissionMembers({ gameKey: state.secret }, handleRoundMembersUpdate);
+                const missionMembersListener = listenForMission({ gameKey: state.secret }, handleRoundMembersUpdate);
 
                 return () => {
                     characterListener.off()
@@ -265,6 +266,7 @@ export const GameProvider = ({ children }) => {
 
         }
     }, [state.secret, state.setupStep])
+
     // END CHARACTER
     const handlePlayerAction = (action: PlayerAction) => {
         dispatch({ type: "PLAYER_ACTION", payload: action })
