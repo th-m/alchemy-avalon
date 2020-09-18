@@ -23,17 +23,6 @@ export const characterPics = {
     percival: percival,
 }
 
-const KnownInfo = (props) => {
-    return (props.data ? <> {Object.keys(props.data).map((k, i) => <KnownData character={k} xpos={i} names={props.data[k]} />)} </> : null);
-}
-
-const KnownData = (props) => {
-    return <>
-        <text x="100" y="170" font-family="Verdana" font-size="30" fill="green">{props.character}</text>
-        {props.names.map((name, i) => <text x="100" y={((i * 20) + 200)} font-family="Verdana" font-size="" fill="green">{name}</text>)}
-    </>
-}
-
 const useStyles = makeStyles((theme) => ({
     // style rule
     missionLighting: {

@@ -1,7 +1,7 @@
 import React, { useReducer, createContext, Dispatch, useEffect } from "react";
-import { createGame, getGame, joinGame, listenForCharacter, listenForPlayers, getCharacter, listenForGameStatus, listenForCaptain, listenForMission, listenForPlayerAction, getActiveMission } from "./firebase/actions";
+import { createGame, joinGame, TypedPathWrapper, typedPath } from "./firebase/actions";
 import firebase from "firebase";
-import { Players, Player, Characters, Game, GameStatus, MissionStatuses, Alignments, KnownCharacter, PlayerAction, GameMissionInfo } from "../../schemas";
+import { Players, Player, Characters, Game, GameStatus, Alignments, KnownCharacter, PlayerAction, GameMissionInfo, GamePaths } from "../../schemas";
 
 export interface Character {
     characterName: keyof typeof Characters,
@@ -21,6 +21,7 @@ interface ContextState {
     mission: GameMissionInfo;
     missionMembers: Players;
     activeMission: number;
+    routes: TypedPathWrapper<Game>;
 }
 
 interface ContextInterface {
@@ -95,7 +96,7 @@ function reducer(state: ContextState, action: Actions) {
         case "ADD_CHARACTER_TO_LIST":
             return { ...state };
         case "SET_SECRET":
-            return { ...state, secret: action.payload };
+            return { ...state, secret: action.payload, routes: typedPath<GamePaths>().games[action.payload] };
         case "SET_CREATOR":
             return { ...state, isCreator: action.payload };
         case "SET_SETUP_STEP":
@@ -137,6 +138,7 @@ const initState: ContextState = {
     },
     missionMembers: {},
     activeMission: 0,
+    routes: typedPath<GamePaths>().games['']
 }
 
 export const GameContext = createContext<ContextInterface>({
@@ -145,9 +147,12 @@ export const GameContext = createContext<ContextInterface>({
 
 });
 
-export const GameProvider = ({ children }) => {
+interface Props {
+    children: JSX.Element[]
+}
+export const GameProvider = ({ children }: Props) => {
     const [state, dispatch] = useReducer(reducer, initState)
-
+    const { routes } = state;
     // AUTH
     useEffect(() => {
         const currentUser = firebase.auth().currentUser;
@@ -164,9 +169,8 @@ export const GameProvider = ({ children }) => {
     // END AUTH
 
     // SECRET
-    const checkSecret = async (secret) => {
-        const gameData: Game = await getGame(secret);
-
+    const checkSecret = async (secret: string) => {
+        const gameData: Game = await routes.$value;
         if (!gameData) {
             createGame(secret)
             dispatch({ type: "SET_CREATOR", payload: true })
@@ -190,8 +194,9 @@ export const GameProvider = ({ children }) => {
         }
 
     }
+
     const handleUpdateStatus = (status: GameStatus) => {
-        if (status === 'ended') {
+        if (status === "ended") {
             const currentUser = firebase.auth().currentUser;
             if (currentUser?.uid) {
                 dispatch({ type: "SET_SETUP_STEP", payload: 2 })
@@ -204,7 +209,9 @@ export const GameProvider = ({ children }) => {
     useEffect(() => {
         if (state.secret) {
             checkSecret(state.secret)
-            const gameStatusListener = listenForGameStatus({ gameKey: state.secret }, handleUpdateStatus);
+            const gameStatusListener = routes.status.$listen(handleUpdateStatus)
+            console.log('raw', routes.status.$raw)
+            // const gameStatusListener = listenForGameStatus({ gameKey: state.secret }, handleUpdateStatus);
             return () => {
                 gameStatusListener.off()
             }
@@ -221,9 +228,10 @@ export const GameProvider = ({ children }) => {
     }
     useEffect(() => {
         if (state.secret) {
-            const { ref } = listenForPlayers({ gameKey: state.secret });
-            ref.on("child_added", (snapshot) => handleAddPlayer(snapshot.val()))
-            ref.on("child_removed", (snapshot) => handleRemovePlayer(snapshot.val()))
+            const ref = routes.players.$ref;
+            // const { ref } = listenForPlayers({ gameKey: state.secret });
+            ref.on("child_added", (snapshot: any) => handleAddPlayer(snapshot.val()))
+            ref.on("child_removed", (snapshot: any) => handleRemovePlayer(snapshot.val()))
             return () => {
                 ref.off("child_added")
                 ref.off("child_removed")
@@ -245,21 +253,28 @@ export const GameProvider = ({ children }) => {
         dispatch({ type: "SET_CAPTAIN", payload: uuid })
     }
 
-    const handleRoundMembersUpdate = (missionInfo: GameMissionInfo) => {
+    const handleMissionUpdate = (missionInfo: GameMissionInfo) => {
         dispatch({ type: "SET_UPDATE_MISSION", payload: missionInfo })
+    }
+
+    const handleMissionMembersUpdate = (missionMembers: Players) => {
+        dispatch({ type: "SET_MISSION_MEMBERS", payload: missionMembers })
     }
 
     useEffect(() => {
         if (state.secret && state.setupStep >= 3) {
             const currentUser = firebase.auth().currentUser;
             if (state.secret && currentUser?.uid) {
-                const characterListener = listenForCharacter({ gameKey: state.secret, uid: currentUser?.uid }, handleCharacterUpdate);
-                const captainListener = listenForCaptain({ gameKey: state.secret }, handleCaptainUpdate);
-                const missionMembersListener = listenForMission({ gameKey: state.secret }, handleRoundMembersUpdate);
+                const characterListener = routes.characters[currentUser.uid].$listen(handleCharacterUpdate)
+
+                const captainListener = routes.captain.$listen(handleCaptainUpdate)
+                const missionListener = routes.mission.$listen(handleMissionUpdate)
+                const missionMembersListener = routes.missionMembers.$listen(handleMissionMembersUpdate);
 
                 return () => {
                     characterListener.off()
                     captainListener.off()
+                    missionListener.off()
                     missionMembersListener.off()
                 }
             }
@@ -276,7 +291,8 @@ export const GameProvider = ({ children }) => {
     useEffect(() => {
         const currentUser = firebase.auth().currentUser;
         if (state.secret && currentUser?.uid) {
-            const listen = listenForPlayerAction({ gameKey: state.secret, uid: currentUser?.uid }, handlePlayerAction);
+            const listen = routes.playersActions[currentUser.uid].$listen(handlePlayerAction)
+            // const listen = listenForPlayerAction({ gameKey: state.secret, uid: currentUser?.uid }, handlePlayerAction);
             return () => {
                 listen.off()
             }

@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-function moveEyes(state, action) {
+function moveEyes(state: any, action: any) {
 	switch (action) {
 		case 'center':
 			return ({

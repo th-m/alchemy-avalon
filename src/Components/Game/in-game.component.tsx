@@ -1,6 +1,7 @@
 import React, { useContext } from 'react'
-import { Paper, Typography, Avatar, Fade, Grow, Grid, Tab, IconButton, Tooltip } from '@material-ui/core'
+import { Paper, Typography, Avatar, Fade, Grow, Grid, Tab, IconButton, Tooltip, Icon } from '@material-ui/core'
 import { GameContext } from '../../provider'
+import { Voting } from './voting.component'
 import '../../App.css';
 import { Player } from '../../../../schemas';
 import TouchAppIcon from '@material-ui/icons/TouchApp';
@@ -9,32 +10,41 @@ import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import BadIcon from '@material-ui/icons/SentimentDissatisfied';
 import GoodIcon from '@material-ui/icons/InsertEmoticon';
+import MemberIcon from '@material-ui/icons/TurnedIn';
+import StarHalfIcon from '@material-ui/icons/StarHalf';
 import firebase from 'firebase';
 
-const PlayersList = ({ players }) => players.map(player => <PlayerCard key={player.uid} {...player} />);
+const PlayersList = ({ players }: { players: Player[] }) => {
+    return (
+        <>
+            {
+                players.map((player) => <PlayerCard key={player.uid} {...player} />)
+            }
+        </>
+    )
+};
 
 const PlayerCard = (player: Player) => {
     const ctx = useContext(GameContext);
     const playerCardStyle: React.CSSProperties = { marginBottom: 8, padding: 8, display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "flex-start", border: 'none' };
 
-    if (ctx.state.captain === firebase.auth().currentUser?.uid) {
-        playerCardStyle.border = "1px solid blue";
-    }
-
-    if (ctx.state.captain === player.uid) {
-        playerCardStyle.border = "1px solid gold";
-    }
     const knows = ctx.state?.character?.knows || [];
     const knownMatch = knows.find(known => known?.player?.uid == player.uid);
 
 
     const isCaptain: boolean = ctx.state.captain === firebase.auth().currentUser?.uid
     const teamSelect = ctx.state.action === "select team";
+    const voteAction = ctx.state.action === "vote";
     const memberLimit = ctx.state.mission?.memberCount ?? 0;
     const members = { ...ctx.state.missionMembers };
-    const membersCount = Object.keys(members).length;
-    const shouldAddMembers = isCaptain && teamSelect && !members[player.uid] && memberLimit > membersCount
-    const shouldRemoveMembers = isCaptain && teamSelect && members[player.uid]
+    const membersKeys = Object.keys(members)
+    const membersCount = membersKeys.length;
+
+    const playerIsMember = members[player.uid]
+    const playerIsCaptain = player.uid === ctx.state.captain
+    const shouldAddMembers = isCaptain && teamSelect && !playerIsMember && memberLimit > membersCount
+    const shouldRemoveMembers = isCaptain && teamSelect && playerIsMember
+
     const addToTeam = () => {
         ctx.dispatch({ type: "SET_MISSION_MEMBERS", payload: { ...members, [player.uid]: player } })
     }
@@ -80,6 +90,28 @@ const PlayerCard = (player: Player) => {
                         </>
                     }
 
+                    {
+                        playerIsCaptain &&
+                        <>
+                            <Tooltip title={`captain`}>
+                                <Icon>
+                                    <StarHalfIcon />
+                                </Icon>
+                            </Tooltip>
+                        </>
+                    }
+
+                    {
+                        playerIsMember && voteAction &&
+                        <>
+                            <Tooltip title={`Selected by captain`}>
+                                <Icon>
+                                    <MemberIcon />
+                                </Icon>
+                            </Tooltip>
+                        </>
+                    }
+
                 </div>
             </Paper>
         </Grow>
@@ -88,6 +120,7 @@ const PlayerCard = (player: Player) => {
 
 export const InGame = () => {
     const ctx = useContext(GameContext);
+    const voteAction = ctx.state.action === "vote";
     return (
         <>
             <div style={{
@@ -98,6 +131,7 @@ export const InGame = () => {
                 flexDirection: 'column',
             }} >
                 <PlayersList players={Object.values(ctx.state.players).map(player => player)} />
+                <Voting open={voteAction} />
             </div>
         </>
     )

@@ -1,5 +1,5 @@
-import { Players } from '../../../../schemas/';
-import { joinGame, joinGameDev, getCharacter } from '../../firebase/actions'
+import { Player, Players } from '../../../../schemas/';
+import { joinGame, joinGameDev, dev_getCharacter } from '../../firebase/actions'
 import { auth } from '../../firebase/connect.firebase'
 import { to } from '../../utils';
 const player1 = {
@@ -63,11 +63,11 @@ const players: Players = {
 }
 
 const testGame = "test_1"
-const sleep = ms => {
+const sleep = (ms: number) => {
     return new Promise(resolve => setTimeout(resolve, ms))
 }
 
-const sendPlayerIn = player => {
+const sendPlayerIn = (player: Player) => {
     return sleep(1000).then(v => joinGameDev(testGame, player))
 }
 
@@ -77,8 +77,8 @@ const havePlayersJoin = async () => {
     }
 }
 
-const getChar = async (secret, uid) => {
-    const characterData = await getCharacter(secret, uid);
+const getChar = async (secret: string, uid: string) => {
+    const characterData = await dev_getCharacter(secret, uid);
     console.log({ characterData })
 }
 

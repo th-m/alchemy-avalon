@@ -15,5 +15,5 @@ export const characterSvgs = {
     deepfake: Deepfake,
     renegade: Renegade,
     agent: Agent,
-    assassi: Assassin,
+    assassin: Assassin,
 }

@@ -16,7 +16,7 @@ if (process.env.REACT_APP_ENV === 'local') {
     // In almost all cases the ns (namespace) is your project ID.
     config.databaseURL = "http://localhost:9000/?ns=alchemy-f82c5"
 }
-console.log(config);
+
 firebase.initializeApp(config);
 
 const db = firebase.firestore();

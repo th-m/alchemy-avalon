@@ -7,7 +7,7 @@ import { BackDrop } from './backdrop.component'
 import { Auth } from './../facebook-login.component'
 import '../../App.css';
 
-const gameStateRouter = (param) => {
+const gameStateRouter = (param: number) => {
   switch (param) {
     case 1:
       return <Auth />

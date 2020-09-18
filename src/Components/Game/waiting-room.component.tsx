@@ -1,11 +1,17 @@
 import React, { useContext } from 'react'
-import { Paper, Button, Typography, Avatar, Grow, Fab } from '@material-ui/core'
+import { Paper, Typography, Avatar, Grow, Fab } from '@material-ui/core'
 import { GameContext } from '../../provider'
-// import '../../App.css';
 import { Player } from '../../../../schemas/';
 
-const PlayersList = ({ players }) => players.map(player => <PlayerCard key={player.uid} {...player} />);
-
+const PlayersList = ({ players }: { players: Player[] }) => {
+    return (
+        <>
+            {
+                players.map((player) => <PlayerCard key={player.uid} {...player} />)
+            }
+        </>
+    )
+};
 
 const PlayerCard = (props: Player) => {
     return (

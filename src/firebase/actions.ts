@@ -1,6 +1,6 @@
 import { auth, firebase } from './connect.firebase'
 import { to } from '../utils';
-import { Players, Player, Characters, Game, SetMissionMembersReq, GameStatus, MissionStatuses, Alignments, KnownCharacter, PlayerAction } from "../../../schemas";
+import { Players, Player, Characters, Game, GamePaths, SetMissionMembersReq, GameStatus, MissionStatuses, Alignments, KnownCharacter, PlayerAction } from "../../../schemas";
 import { Character } from '../provider';
 
 // Not allowed in firebase paths
@@ -37,77 +37,46 @@ export const testNextCaptain = () => {
     });
 }
 
-type UID = string;
-interface ListenKeys {
-    [key: string]: string | number;
+export const routes = (key: string) => typedPath<GamePaths>().games[key]
+
+export const toRoute = (path: TypedPathWrapper<any>) => {
+    return path.toString().split('.').join('/')
 }
 
-type ListenCallBack<T> = (t: T) => void;
-export function listenForCharacter({ gameKey, uid }: ListenKeys, cb: ListenCallBack<Character>) {
-    return listen(`games/${gameKey}/characters/${uid}`, cb)
+export async function dev_getCharacter(gameKey: string, uid: string) {
+    const path = routes(gameKey).characters[uid].$path;
+    return await getValue(path)
 }
 
-export function listenForPlayerAction({ gameKey, uid }: ListenKeys, cb: ListenCallBack<PlayerAction>) {
-    return listen(`games/${gameKey}/playersActions/${uid}`, cb)
+export async function dev_getGame(gameKey: string) {
+    const path = routes(gameKey).$path
+    return await getValue(path)
 }
 
-export function listenForGameAction({ gameKey }: ListenKeys, cb: ListenCallBack<PlayerAction>) {
-    return listen(`games/${gameKey}/`, cb)
-}
-
-export function listenForCaptain({ gameKey }: ListenKeys, cb: ListenCallBack<UID>) {
-    return listen(`games/${gameKey}/captain`, cb)
-}
-
-
-export function listenForMission({ gameKey }: ListenKeys, cb: ListenCallBack<any>) {
-    return listen(`games/${gameKey}/mission`, cb);
-}
-
-export function listenForPlayers({ gameKey }: ListenKeys, cb?: ListenCallBack<Players>) {
-    return listen(`games/${gameKey}/players`, cb);
-}
-export function listenForGameStatus({ gameKey }: ListenKeys, cb: ListenCallBack<GameStatus>) {
-    return listen(`games/${gameKey}/status`, cb);
-}
-
-export async function getCharacter(gameKey, uid) {
-    return await getValue(`games/${gameKey}/characters/${uid}`)
-}
-
-export async function getGame(gameKey) {
-    return await getValue(`games/${gameKey}`)
-}
-
-export async function getUsersGame(uid: string) {
-    return await getValue(`usersGames/${uid}`)
-}
-
-export async function getActiveMission(gameKey: string, activeMission: number) {
-    return await getValue(`games/${gameKey}/missions/${activeMission}`)
-}
 export function joinGame(gameKey: string) {
     if (auth.currentUser) {
         _joinGame(gameKey, auth.currentUser);
     }
 }
 
-function _joinGame(gameKey, player) {
-    const { displayName, uid, photoURL, email } = player;
-    firebase.database().ref(`games/${gameKey}/players`).update({
-        [uid]: { displayName, uid, photoURL, email }
-    });
+function _joinGame(gameKey: string, player?: Player | firebase.User) {
+    if (player) {
+        const { displayName, uid, photoURL, email } = player;
+        firebase.database().ref(`games/${gameKey}/players`).update({
+            [uid]: { displayName, uid, photoURL, email }
+        });
 
-    firebase.database().ref(`usersGames/${uid}/`).update({
-        gameID: gameKey, lastUpdated: (new Date).toISOString()
-    });
+        firebase.database().ref(`usersGames/${uid}/`).update({
+            gameID: gameKey, lastUpdated: (new Date).toISOString()
+        });
+    }
 }
 
-export function joinGameDev(gameKey: string, player) {
+export function joinGameDev(gameKey: string, player: Player) {
     _joinGame(gameKey, player);
 }
 
-export function setGameDev(gameKey: string, d) {
+export function setGameDev(gameKey: string, d: Object) {
     firebase.database().ref(`games/${gameKey}`).update(d);
 }
 
@@ -139,18 +108,103 @@ export function createGame(gameKey: string) {
 
 type CleanUP = () => void;
 
-function listen(s: string, cb?: (d: any) => void): { off: CleanUP, ref: firebase.database.Reference } {
-    const ref = firebase.database().ref(s);
+interface Listener {
+    off: CleanUP;
+}
+
+function listen<T = any>(path: string, cb: (d: T) => void): Listener {
+    const ref = firebase.database().ref(path);
     if (cb) {
         ref.on("value", (snapshot) => cb(snapshot.val()))
     }
     return {
         off: () => ref.off('value'),
-        ref: ref,
     }
 }
 
-async function getValue(s: string) {
-    const p = firebase.database().ref(s).once('value', snap => snap)
+async function getValue<T = any>(path: string): Promise<T> {
+    const p = firebase.database().ref(path).once('value', snap => snap)
     return (await to(p)).val()
 }
+
+
+const toStringMethods: (string | symbol | number)[] = [
+    'toString',
+    Symbol.toStringTag,
+    'valueOf'
+];
+
+function pathToString(path: string[]): string {
+    return path.reduce((current, next) => {
+        if (+next === +next) {
+            current += `[${next}]`;
+        } else {
+            current += current === '' ? `${next}` : `.${next}`;
+        }
+
+        return current;
+    }, '');
+}
+
+
+export function typedPath<T>(path: string[] = []): TypedPathWrapper<T> {
+    return <TypedPathWrapper<T>>new Proxy({}, {
+        get(target: T, name: TypedPathKey) {
+            if (name === '$path') {
+                return pathToString(path).split('.').join('/')
+            }
+
+            if (name === '$raw') {
+                return path;
+            }
+
+            if (name === '$listen') {
+                const route = pathToString(path).split('.').join('/')
+                return (cb: any) => listen<T>(route, cb);
+            }
+
+            if (name === '$value') {
+                const route = pathToString(path).split('.').join('/')
+                return getValue(route);
+            }
+
+            if (name === '$ref') {
+                const route = pathToString(path).split('.').join('/')
+                return firebase.database().ref(route);
+            }
+
+            if (toStringMethods.includes(name)) {
+                return () => pathToString(path);
+            }
+
+            return typedPath([...path, name.toString()]);
+        }
+    });
+}
+
+type TypedPathKey = string | symbol | number;
+
+type TypedPathNode<T> = {
+    $path: string;
+    $raw: TypedPathKey[];
+    $listen: (cb: (d: T) => void) => Listener;
+    $ref: firebase.database.Reference;
+    $value: Promise<T>;
+};
+
+type TypedPathFunction<T> = (...args: any[]) => T;
+
+export type TypedPathWrapper<T> = (T extends Array<infer Z>
+    ? {
+        [index: number]: TypedPathWrapper<Z>;
+    }
+    : T extends TypedPathFunction<infer RET>
+    ? {
+        (): TypedPathWrapper<RET>;
+    } & {
+        [P in keyof RET]: TypedPathWrapper<RET[P]>;
+    }
+    : {
+        [P in keyof T]: TypedPathWrapper<T[P]>;
+    }
+) & TypedPathNode<T>;

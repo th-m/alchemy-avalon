@@ -1,6 +1,6 @@
 import React, { Component, Fragment, useState } from "react"
 import { usePlayerUtils } from './players'
-import { getGame, setGameDev, testNextCaptain } from "../../firebase/actions";
+import { dev_getGame, setGameDev, testNextCaptain } from "../../firebase/actions";
 import stubGame from './stub.game.json'
 
 export const DevUtils = () => {
@@ -8,13 +8,13 @@ export const DevUtils = () => {
     const [uid, setUid] = useState("1");
 
 
-    const getGameData = async (secret) => {
-        const gameInfo = await getGame(secret);
+    const getGameData = async (secret: string) => {
+        const gameInfo = await dev_getGame(secret);
         console.log({ gameInfo })
         console.log(JSON.stringify(gameInfo))
     }
 
-    const setGame = async (secret) => {
+    const setGame = async (secret: string) => {
         setGameDev(secret, stubGame);
     }
 
