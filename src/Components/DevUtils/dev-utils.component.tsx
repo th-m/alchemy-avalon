@@ -1,9 +1,11 @@
-import React, { Component, Fragment, useState } from "react"
+import React, { Component, Fragment, useContext, useState } from "react"
 import { usePlayerUtils } from './players'
-import { dev_getGame, setGameDev, testNextCaptain } from "../../firebase/actions";
+import { dev_getGame, setGameDev, testNextCaptain, setPlayerVote } from "../../firebase/actions";
 import stubGame from './stub.game.json'
+import { GameContext } from "../../provider";
 
 export const DevUtils = () => {
+    const ctx = useContext(GameContext);
     const { havePlayersJoin, getCharacter } = usePlayerUtils()
     const [uid, setUid] = useState("1");
 
@@ -18,6 +20,11 @@ export const DevUtils = () => {
         setGameDev(secret, stubGame);
     }
 
+    const setPlayerVotes = async () => {
+        Object.values(ctx.state.players).forEach((player) => {
+            setPlayerVote({ player, mission: ctx.state.mission, gameKey: ctx.state.secret, vote: !!Math.floor(Math.random()) })
+        })
+    }
     return (
         <div style={{
             display: 'flex',
@@ -50,6 +57,11 @@ export const DevUtils = () => {
             <div>
                 <button onClick={() => testNextCaptain()}>
                     next captain
+                </button>
+            </div>
+            <div>
+                <button onClick={() => setPlayerVotes()}>
+                    set player votes
                 </button>
             </div>
         </div>

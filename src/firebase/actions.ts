@@ -1,6 +1,6 @@
 import { auth, firebase } from './connect.firebase'
 import { to } from '../utils';
-import { Players, Player, Characters, Game, GamePaths, SetMissionMembersReq, GameStatus, MissionStatuses, Alignments, KnownCharacter, PlayerAction } from "../../../schemas";
+import { Players, Player, Characters, Game, GamePaths, SetMissionMembersReq, GameStatus, MissionStatuses, Alignments, KnownCharacter, PlayerAction, PlayerVoteReq } from "../../../schemas";
 import { Character } from '../provider';
 
 // Not allowed in firebase paths
@@ -27,11 +27,28 @@ export const setMissionMembers = async (opts: SetMissionMembersReq) => {
         console.log('set mission members response:', data);
     });
 }
-
+// PlayerVoteReq
 export const testNextCaptain = () => {
     const url = 'http://localhost:5001/alchemy-f82c5/us-central1/nextCaptain'
     fetch(url).then(function (response) {
         return response?.json() ?? {};
+    }).then(function (data) {
+        console.log('set mission members response:', data);
+    });
+}
+
+export const setPlayerVote = (voteRequest: PlayerVoteReq) => {
+    const url = 'http://localhost:5001/alchemy-f82c5/us-central1/playerVote'
+    fetch(url, {
+        method: 'POST',
+        body: JSON.stringify(voteRequest),
+        mode: 'no-cors',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then(function (response) {
+        console.log(response)
+        // return response?.json() ?? {};
     }).then(function (data) {
         console.log('set mission members response:', data);
     });

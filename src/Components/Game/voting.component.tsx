@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Avatar from '@material-ui/core/Avatar';
@@ -14,6 +14,9 @@ import Typography from '@material-ui/core/Typography';
 import { blue } from '@material-ui/core/colors';
 import { DialogActions } from '@material-ui/core';
 import { GameContext } from '../../provider'
+import { setPlayerVote } from '../../firebase/actions';
+import { auth } from 'firebase';
+import firebase from 'firebase';
 
 const emails = ['username@gmail.com', 'user02@gmail.com'];
 
@@ -31,6 +34,7 @@ interface Props {
 
 export function Voting(props: Props) {
     const ctx = useContext(GameContext);
+    const [visible, setVisible] = useState(true);
     const members = Object.values(ctx?.state?.missionMembers ?? {});
     const classes = useStyles();
     const { open } = props;
@@ -39,11 +43,17 @@ export function Voting(props: Props) {
     const handleListItemClick = (id: string) => {
         console.log(id)
     }
-    const handleVote = (decision: any) => () => {
-        console.log(decision)
+
+    const handleVote = (vote: boolean) => () => {
+        const player = Object.values(ctx.state.players).find(player => player.uid === firebase.auth()?.currentUser?.uid)
+        if (player) {
+            setPlayerVote({ player, mission: ctx.state.mission, vote, gameKey: ctx.state.secret })
+        }
+        setVisible(false)
     }
+
     return (
-        <Dialog aria-labelledby="simple-dialog-title" open={open}>
+        <Dialog aria-labelledby="simple-dialog-title" open={open && visible}>
             <DialogTitle id="simple-dialog-title">Approve or Reject this Team?</DialogTitle>
             <List>
                 {members.map((member) => (
@@ -56,10 +66,10 @@ export function Voting(props: Props) {
                     </ListItem>
                 ))}
                 <DialogActions>
-                    <Button onClick={handleVote('Reject')} color="primary">
+                    <Button onClick={handleVote(true)} color="primary">
                         Reject
                     </Button>
-                    <Button onClick={handleVote('Approve')} color="primary">
+                    <Button onClick={handleVote(false)} color="primary">
                         Approve
                     </Button>
                 </DialogActions>
@@ -68,27 +78,3 @@ export function Voting(props: Props) {
         </Dialog>
     );
 }
-
-// export default function Voting() {
-//   const [open, setOpen] = React.useState(false);
-
-//   const handleClickOpen = () => {
-//     setOpen(true);
-//   };
-
-//   const handleClose = (value: string) => {
-//     setOpen(false);
-//     setSelectedValue(value);
-//   };
-
-//   return (
-//     <div>
-//       <Typography variant="subtitle1">Selected: {selectedValue}</Typography>
-//       <br />
-//       <Button variant="outlined" color="primary" onClick={handleClickOpen}>
-//         Open simple dialog
-//       </Button>
-//       {/* <SimpleDialog selectedValue={selectedValue} open={open} onClose={() => setOpen(false)} /> */}
-//     </div>
-//   );
-// }
