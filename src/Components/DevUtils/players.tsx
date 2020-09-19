@@ -1,4 +1,4 @@
-import { Player, Players } from '../../../../schemas/';
+import { Player, Players } from '../../../../avalon-fire-functions/functions/src/connivance-schema';
 import { joinGame, joinGameDev, dev_getCharacter } from '../../firebase/actions'
 import { auth } from '../../firebase/connect.firebase'
 import { to } from '../../utils';

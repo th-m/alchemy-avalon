@@ -4,7 +4,7 @@ import { GameContext } from '../../provider';
 import { startGame, setMissionMembers } from '../../firebase/actions';
 import logo from '../../assets/imgs/logo.svg';
 import firebase from 'firebase';
-import { PlayerAction, SetMissionMembersReq } from '../../../../schemas'
+import { PlayerAction, SetMissionMembersReq } from '../../../../avalon-fire-functions/functions/src/connivance-schema'
 export const Footer = () => {
   const ctx = useContext(GameContext);
   const activateGame = () => {

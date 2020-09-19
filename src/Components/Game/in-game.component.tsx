@@ -3,7 +3,7 @@ import { Paper, Typography, Avatar, Fade, Grow, Grid, Tab, IconButton, Tooltip, 
 import { GameContext } from '../../provider'
 import { Voting } from './voting.component'
 import '../../App.css';
-import { Player } from '../../../../schemas';
+import { Player } from '../../../../avalon-fire-functions/functions/src/connivance-schema';
 import TouchAppIcon from '@material-ui/icons/TouchApp';
 import AddIcon from '@material-ui/icons/Add';
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';

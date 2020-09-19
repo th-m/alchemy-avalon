@@ -1,7 +1,7 @@
 import React, { useReducer, createContext, Dispatch, useEffect } from "react";
 import { createGame, joinGame, TypedPathWrapper, typedPath } from "./firebase/actions";
 import firebase from "firebase";
-import { Players, Player, Characters, Game, GameStatus, Alignments, KnownCharacter, PlayerAction, GameMissionInfo, GamePaths } from "../../schemas";
+import { Players, Player, Characters, Game, GameStatus, Alignments, KnownCharacter, PlayerAction, GameMissionInfo, GamePaths } from "../../avalon-fire-functions/functions/src/connivance-schema";
 
 export interface Character {
     characterName: keyof typeof Characters,
@@ -21,7 +21,7 @@ interface ContextState {
     mission: GameMissionInfo;
     missionMembers: Players;
     activeMission: number;
-    routes: TypedPathWrapper<Game>;
+    db: TypedPathWrapper<Game>;
 }
 
 interface ContextInterface {
@@ -96,7 +96,7 @@ function reducer(state: ContextState, action: Actions) {
         case "ADD_CHARACTER_TO_LIST":
             return { ...state };
         case "SET_SECRET":
-            return { ...state, secret: action.payload, routes: typedPath<GamePaths>().games[action.payload] };
+            return { ...state, secret: action.payload, db: typedPath<GamePaths>().games[action.payload] };
         case "SET_CREATOR":
             return { ...state, isCreator: action.payload };
         case "SET_SETUP_STEP":
@@ -138,7 +138,7 @@ const initState: ContextState = {
     },
     missionMembers: {},
     activeMission: 0,
-    routes: typedPath<GamePaths>().games['']
+    db: typedPath<GamePaths>().games['']
 }
 
 export const GameContext = createContext<ContextInterface>({
@@ -152,7 +152,7 @@ interface Props {
 }
 export const GameProvider = ({ children }: Props) => {
     const [state, dispatch] = useReducer(reducer, initState)
-    const { routes } = state;
+    const { db } = state;
     // AUTH
     useEffect(() => {
         const currentUser = firebase.auth().currentUser;
@@ -170,7 +170,7 @@ export const GameProvider = ({ children }: Props) => {
 
     // SECRET
     const checkSecret = async (secret: string) => {
-        const gameData: Game = await routes.$value;
+        const gameData: Game = await db.$value;
         if (!gameData) {
             createGame(secret)
             dispatch({ type: "SET_CREATOR", payload: true })
@@ -209,8 +209,8 @@ export const GameProvider = ({ children }: Props) => {
     useEffect(() => {
         if (state.secret) {
             checkSecret(state.secret)
-            const gameStatusListener = routes.status.$listen(handleUpdateStatus)
-            console.log('raw', routes.status.$raw)
+            const gameStatusListener = db.status.$listen(handleUpdateStatus)
+            console.log('raw', db.status.$raw)
             // const gameStatusListener = listenForGameStatus({ gameKey: state.secret }, handleUpdateStatus);
             return () => {
                 gameStatusListener.off()
@@ -228,7 +228,7 @@ export const GameProvider = ({ children }: Props) => {
     }
     useEffect(() => {
         if (state.secret) {
-            const ref = routes.players.$ref;
+            const ref = db.players.$ref;
             // const { ref } = listenForPlayers({ gameKey: state.secret });
             ref.on("child_added", (snapshot: any) => handleAddPlayer(snapshot.val()))
             ref.on("child_removed", (snapshot: any) => handleRemovePlayer(snapshot.val()))
@@ -265,11 +265,11 @@ export const GameProvider = ({ children }: Props) => {
         if (state.secret && state.setupStep >= 3) {
             const currentUser = firebase.auth().currentUser;
             if (state.secret && currentUser?.uid) {
-                const characterListener = routes.characters[currentUser.uid].$listen(handleCharacterUpdate)
+                const characterListener = db.characters[currentUser.uid].$listen(handleCharacterUpdate)
 
-                const captainListener = routes.captain.$listen(handleCaptainUpdate)
-                const missionListener = routes.mission.$listen(handleMissionUpdate)
-                const missionMembersListener = routes.missionMembers.$listen(handleMissionMembersUpdate);
+                const captainListener = db.captain.$listen(handleCaptainUpdate)
+                const missionListener = db.mission.$listen(handleMissionUpdate)
+                const missionMembersListener = db.missionMembers.$listen(handleMissionMembersUpdate);
 
                 return () => {
                     characterListener.off()
@@ -291,7 +291,8 @@ export const GameProvider = ({ children }: Props) => {
     useEffect(() => {
         const currentUser = firebase.auth().currentUser;
         if (state.secret && currentUser?.uid) {
-            const listen = routes.playersActions[currentUser.uid].$listen(handlePlayerAction)
+
+            const listen = db.playersActions[currentUser.uid].$listen(handlePlayerAction)
             // const listen = listenForPlayerAction({ gameKey: state.secret, uid: currentUser?.uid }, handlePlayerAction);
             return () => {
                 listen.off()
