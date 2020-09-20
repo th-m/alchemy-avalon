@@ -1,7 +1,7 @@
 import React, { useReducer, createContext, Dispatch, useEffect } from "react";
 import { createGame, joinGame, TypedPathWrapper, typedPath } from "./firebase/actions";
 import firebase from "firebase";
-import { Players, Player, Characters, Game, GameStatus, Alignments, KnownCharacter, PlayerAction, GameMissionInfo, GamePaths } from "../../avalon-fire-functions/functions/src/connivance-schema";
+import { Players, Player, Characters, Game, GameStatus, Alignments, KnownCharacter, PlayerAction, GameMissionInfo, GamePaths } from "../../avalon-fire-functions/functions/src/connivance/schema";
 
 export interface Character {
     characterName: keyof typeof Characters,
@@ -17,7 +17,7 @@ interface ContextState {
     character?: Character;
     players: Players;
     setupStep: number;
-    captain: string;
+    captain: Player;
     mission: GameMissionInfo;
     missionMembers: Players;
     activeMission: number;
@@ -42,7 +42,7 @@ interface SetKeyString {
 
 interface SetCaptain {
     type: "SET_CAPTAIN";
-    payload: string;
+    payload: Player;
 }
 
 interface SetCreator {
@@ -126,7 +126,12 @@ function reducer(state: ContextState, action: Actions) {
 
 const initState: ContextState = {
     secret: '',
-    captain: '',
+    captain: {
+        displayName: '',
+        email: '',
+        photoURL: '',
+        uid: '',
+    },
     action: '',
     players: {},
     setupStep: 1,
@@ -210,8 +215,6 @@ export const GameProvider = ({ children }: Props) => {
         if (state.secret) {
             checkSecret(state.secret)
             const gameStatusListener = db.status.$listen(handleUpdateStatus)
-            console.log('raw', db.status.$raw)
-            // const gameStatusListener = listenForGameStatus({ gameKey: state.secret }, handleUpdateStatus);
             return () => {
                 gameStatusListener.off()
             }
@@ -223,13 +226,14 @@ export const GameProvider = ({ children }: Props) => {
     const handleAddPlayer = (player: Player) => {
         dispatch({ type: "ADD_PLAYER", payload: player })
     }
+
     const handleRemovePlayer = (player: Player) => {
         dispatch({ type: "REMOVE_PLAYER", payload: player })
     }
+
     useEffect(() => {
         if (state.secret) {
             const ref = db.players.$ref;
-            // const { ref } = listenForPlayers({ gameKey: state.secret });
             ref.on("child_added", (snapshot: any) => handleAddPlayer(snapshot.val()))
             ref.on("child_removed", (snapshot: any) => handleRemovePlayer(snapshot.val()))
             return () => {
@@ -249,8 +253,8 @@ export const GameProvider = ({ children }: Props) => {
         }
     }
 
-    const handleCaptainUpdate = (uuid: string) => {
-        dispatch({ type: "SET_CAPTAIN", payload: uuid })
+    const handleCaptainUpdate = (player: Player) => {
+        dispatch({ type: "SET_CAPTAIN", payload: player })
     }
 
     const handleMissionUpdate = (missionInfo: GameMissionInfo) => {
@@ -259,6 +263,10 @@ export const GameProvider = ({ children }: Props) => {
 
     const handleMissionMembersUpdate = (missionMembers: Players) => {
         dispatch({ type: "SET_MISSION_MEMBERS", payload: missionMembers })
+    }
+
+    const handlePlayerAction = (action: PlayerAction) => {
+        dispatch({ type: "PLAYER_ACTION", payload: action })
     }
 
     useEffect(() => {
@@ -270,12 +278,14 @@ export const GameProvider = ({ children }: Props) => {
                 const captainListener = db.captain.$listen(handleCaptainUpdate)
                 const missionListener = db.mission.$listen(handleMissionUpdate)
                 const missionMembersListener = db.missionMembers.$listen(handleMissionMembersUpdate);
+                const playerActionListener = db.playersActions[currentUser.uid].$listen(handlePlayerAction)
 
                 return () => {
                     characterListener.off()
                     captainListener.off()
                     missionListener.off()
                     missionMembersListener.off()
+                    playerActionListener.off()
                 }
             }
 
@@ -283,22 +293,17 @@ export const GameProvider = ({ children }: Props) => {
     }, [state.secret, state.setupStep])
 
     // END CHARACTER
-    const handlePlayerAction = (action: PlayerAction) => {
-        dispatch({ type: "PLAYER_ACTION", payload: action })
-    }
 
-    // PLAYER ACTION
-    useEffect(() => {
-        const currentUser = firebase.auth().currentUser;
-        if (state.secret && currentUser?.uid) {
+    // // PLAYER ACTION
+    // useEffect(() => {
+    //     const currentUser = firebase.auth().currentUser;
+    //     if (state.secret && currentUser?.uid) {
 
-            const listen = db.playersActions[currentUser.uid].$listen(handlePlayerAction)
-            // const listen = listenForPlayerAction({ gameKey: state.secret, uid: currentUser?.uid }, handlePlayerAction);
-            return () => {
-                listen.off()
-            }
-        }
-    }, [state.secret])
+    //         // const listen = listenForPlayerAction({ gameKey: state.secret, uid: currentUser?.uid }, handlePlayerAction);
+    //         return () => {
+    //         }
+    //     }
+    // }, [state.secret])
     // END PLAYER ACTION
     // Allows for plugging in secret after game has ended
     useEffect(() => {

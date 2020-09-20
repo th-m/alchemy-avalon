@@ -1,6 +1,6 @@
 import { auth, firebase } from './connect.firebase'
 import { to } from '../utils';
-import { Player, GamePaths, SetMissionMembersReq, GameStatus, PlayerVoteReq } from "../../../avalon-fire-functions/functions/src/connivance-schema";
+import { Player, GamePaths, MissionMembersReq, GameStatus, PlayerVoteReq } from "../../../avalon-fire-functions/functions/src/connivance/schema";
 
 // Not allowed in firebase paths
 // ".", "#", "$", "[", or "]"
@@ -8,8 +8,19 @@ export const cleanString = (dirty: String) => {
     return dirty.replace(/[|&;$%@"#<>.()+,]/g, "");
 }
 
-export const setMissionMembers = async (opts: SetMissionMembersReq) => {
-    const url = 'http://localhost:5001/alchemy-f82c5/us-central1/setMissionMembers'
+export enum httpPaths {
+    captain = '/captain',
+    teamVote = '/vote/team',
+    missionMembers = '/mission/members',
+    missionVote = '/vote/mission',
+}
+
+const base = 'http://localhost:5001/alchemy-f82c5/us-central1'
+const gameRoutes = '/connivance_api';
+
+const urlBase = base + gameRoutes
+export const setMissionMembers = async (opts: MissionMembersReq) => {
+    const url = urlBase + httpPaths.missionMembers
 
     fetch(url, {
         method: 'POST',
@@ -28,16 +39,41 @@ export const setMissionMembers = async (opts: SetMissionMembersReq) => {
 }
 // PlayerVoteReq
 export const testNextCaptain = () => {
-    const url = 'http://localhost:5001/alchemy-f82c5/us-central1/nextCaptain'
-    fetch(url).then(function (response) {
-        return response?.json() ?? {};
+    const url = urlBase + httpPaths.captain
+    fetch(url, {
+        method: 'POST',
+        body: '',
+        mode: 'no-cors',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then(function (response) {
+        console.log(response)
+        // return response?.json() ?? {};
     }).then(function (data) {
         console.log('set mission members response:', data);
     });
 }
 
-export const setPlayerVote = (voteRequest: PlayerVoteReq) => {
-    const url = 'http://localhost:5001/alchemy-f82c5/us-central1/playerVote'
+export const setTeamVote = (voteRequest: PlayerVoteReq) => {
+    const url = urlBase + httpPaths.teamVote
+    fetch(url, {
+        method: 'POST',
+        body: JSON.stringify(voteRequest),
+        mode: 'no-cors',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then(function (response) {
+        console.log(response)
+        // return response?.json() ?? {};
+    }).then(function (data) {
+        console.log('set mission members response:', data);
+    });
+}
+
+export const setMissionVote = (voteRequest: PlayerVoteReq) => {
+    const url = urlBase + httpPaths.missionVote
     fetch(url, {
         method: 'POST',
         body: JSON.stringify(voteRequest),

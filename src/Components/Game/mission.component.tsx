@@ -14,7 +14,7 @@ import Typography from '@material-ui/core/Typography';
 import { blue } from '@material-ui/core/colors';
 import { DialogActions } from '@material-ui/core';
 import { GameContext } from '../../provider'
-import { setTeamVote } from '../../firebase/actions';
+import { setMissionVote } from '../../firebase/actions';
 import { auth } from 'firebase';
 import firebase from 'firebase';
 
@@ -26,15 +26,15 @@ const useStyles = makeStyles({
         color: blue[600],
         marginRight: 8
     },
-
 });
 
 interface Props {
     open: boolean;
 }
 
-export function Voting(props: Props) {
+export function Mission(props: Props) {
     const ctx = useContext(GameContext);
+    const [visible, setVisible] = useState(true);
     const members = Object.values(ctx?.state?.missionMembers ?? {});
     const classes = useStyles();
     const { open } = props;
@@ -47,29 +47,22 @@ export function Voting(props: Props) {
     const handleVote = (vote: boolean) => () => {
         const player = Object.values(ctx.state.players).find(player => player.uid === firebase.auth()?.currentUser?.uid)
         if (player) {
-            setTeamVote({ player, mission: ctx.state.mission, vote, gameKey: ctx.state.secret })
+            setMissionVote({ player, mission: ctx.state.mission, vote, gameKey: ctx.state.secret })
         }
+        setVisible(false)
     }
 
     return (
-        <Dialog aria-labelledby="simple-dialog-title" open={open}>
-            <DialogTitle id="simple-dialog-title">Approve or Reject this Team?</DialogTitle>
+        <Dialog aria-labelledby="simple-dialog-title" open={open && visible}>
+            <DialogTitle id="simple-dialog-title">Mission</DialogTitle>
             <List>
-                {members.map((member) => (
-                    <ListItem button onClick={() => handleListItemClick(member.uid)} key={member.uid}>
-                        <ListItemAvatar>
-                            <Avatar className={classes.avatar} alt={member.displayName} src={member.photoURL} />
 
-                        </ListItemAvatar>
-                        <ListItemText primary={member.displayName} />
-                    </ListItem>
-                ))}
                 <DialogActions>
                     <Button onClick={handleVote(true)} color="primary">
-                        Reject
+                        Sabotage
                     </Button>
                     <Button onClick={handleVote(false)} color="primary">
-                        Approve
+                        Support
                     </Button>
                 </DialogActions>
 

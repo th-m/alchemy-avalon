@@ -2,8 +2,9 @@ import React, { useContext } from 'react'
 import { Paper, Typography, Avatar, Fade, Grow, Grid, Tab, IconButton, Tooltip, Icon } from '@material-ui/core'
 import { GameContext } from '../../provider'
 import { Voting } from './voting.component'
+import { Mission } from './mission.component'
 import '../../App.css';
-import { Player } from '../../../../avalon-fire-functions/functions/src/connivance-schema';
+import { Player } from '../../../../avalon-fire-functions/functions/src/connivance/schema';
 import TouchAppIcon from '@material-ui/icons/TouchApp';
 import AddIcon from '@material-ui/icons/Add';
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
@@ -24,6 +25,7 @@ const PlayersList = ({ players }: { players: Player[] }) => {
     )
 };
 
+
 const PlayerCard = (player: Player) => {
     const ctx = useContext(GameContext);
     const playerCardStyle: React.CSSProperties = { marginBottom: 8, padding: 8, display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "flex-start", border: 'none' };
@@ -32,7 +34,7 @@ const PlayerCard = (player: Player) => {
     const knownMatch = knows.find(known => known?.player?.uid == player.uid);
 
 
-    const isCaptain: boolean = ctx.state.captain === firebase.auth().currentUser?.uid
+    const isCaptain: boolean = ctx.state?.captain?.uid === firebase.auth().currentUser?.uid
     const teamSelect = ctx.state.action === "select team";
     const voteAction = ctx.state.action === "vote";
     const memberLimit = ctx.state.mission?.memberCount ?? 0;
@@ -41,7 +43,7 @@ const PlayerCard = (player: Player) => {
     const membersCount = membersKeys.length;
 
     const playerIsMember = members[player.uid]
-    const playerIsCaptain = player.uid === ctx.state.captain
+    const playerIsCaptain = player.uid === ctx.state?.captain?.uid
     const shouldAddMembers = isCaptain && teamSelect && !playerIsMember && memberLimit > membersCount
     const shouldRemoveMembers = isCaptain && teamSelect && playerIsMember
 
@@ -121,6 +123,7 @@ const PlayerCard = (player: Player) => {
 export const InGame = () => {
     const ctx = useContext(GameContext);
     const voteAction = ctx.state.action === "vote";
+    const missionAction = ctx.state.action === "run mission";
     return (
         <>
             <div style={{
@@ -132,6 +135,7 @@ export const InGame = () => {
             }} >
                 <PlayersList players={Object.values(ctx.state.players).map(player => player)} />
                 <Voting open={voteAction} />
+                <Mission open={missionAction} />
             </div>
         </>
     )
