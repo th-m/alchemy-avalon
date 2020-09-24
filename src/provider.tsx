@@ -1,7 +1,7 @@
 import React, { useReducer, createContext, Dispatch, useEffect } from "react";
 import { createGame, joinGame, TypedPathWrapper, typedPath } from "./firebase/actions";
 import firebase from "firebase";
-import { Players, Player, Characters, Game, GameStatus, Alignments, KnownCharacter, PlayerAction, GameMissionInfo, GamePaths, MissionsLog } from "../../avalon-fire-functions/functions/src/connivance/schema";
+import { Players, Player, Characters, Game, GameStatus, Alignments, KnownCharacter, PlayerAction, GameMissionInfo, GamePaths, MissionsLog } from "./schema";
 
 export interface Character {
     characterName: keyof typeof Characters,

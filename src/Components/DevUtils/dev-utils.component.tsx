@@ -3,16 +3,16 @@ import { usePlayerUtils } from './players'
 import { dev_getGame, setGameDev, testNextCaptain, setTeamVote, setMissionVote, setMissionMembers } from "../../firebase/actions";
 import stubGame from './stub.game.json'
 import { GameContext } from "../../provider";
-import { MissionMembersReq } from "../../../../avalon-fire-functions/functions/src/connivance/schema";
+import { MissionMembersReq } from "../../schema";
 
 export const DevUtils = () => {
+    const ctx = useContext(GameContext);
+    const { havePlayersJoin, getCharacter } = usePlayerUtils()
     if (process.env.REACT_APP_ENV !== 'local') {
         // Point to the RTDB emulator running on localhost.
         // In almost all cases the ns (namespace) is your project ID.
         return null;
     }
-    const ctx = useContext(GameContext);
-    const { havePlayersJoin, getCharacter } = usePlayerUtils()
     // const [uid, setUid] = useState("1");
 
 

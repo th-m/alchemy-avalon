@@ -1,6 +1,6 @@
 import { auth, firebase } from './connect.firebase'
 import { to } from '../utils';
-import { Player, GamePaths, MissionMembersReq, GameStatus, PlayerVoteReq } from "../../../avalon-fire-functions/functions/src/connivance/schema";
+import { Player, GamePaths, MissionMembersReq, GameStatus, PlayerVoteReq } from "../schema";
 
 // Not allowed in firebase paths
 // ".", "#", "$", "[", or "]"

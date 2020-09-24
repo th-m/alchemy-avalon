@@ -4,7 +4,7 @@ import { GameContext } from '../../provider'
 import { Voting } from './voting.component'
 import { Mission } from './mission.component'
 import '../../App.css';
-import { Player } from '../../../../avalon-fire-functions/functions/src/connivance/schema';
+import { Player } from '../../schema';
 import TouchAppIcon from '@material-ui/icons/TouchApp';
 import AddIcon from '@material-ui/icons/Add';
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
