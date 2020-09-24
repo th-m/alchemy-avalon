@@ -6,6 +6,11 @@ import { GameContext } from "../../provider";
 import { MissionMembersReq } from "../../../../avalon-fire-functions/functions/src/connivance/schema";
 
 export const DevUtils = () => {
+    if (process.env.REACT_APP_ENV !== 'local') {
+        // Point to the RTDB emulator running on localhost.
+        // In almost all cases the ns (namespace) is your project ID.
+        return null;
+    }
     const ctx = useContext(GameContext);
     const { havePlayersJoin, getCharacter } = usePlayerUtils()
     // const [uid, setUid] = useState("1");
