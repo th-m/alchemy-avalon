@@ -1,0 +1,1 @@
+export type emotion = "anger" | "surprise" | "concern" | "smirk"

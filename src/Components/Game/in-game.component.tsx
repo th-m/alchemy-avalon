@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Paper, Typography, Avatar, Fade, Grow, Grid, Tab, IconButton, Tooltip, Icon } from '@material-ui/core'
 import { GameContext } from '../../provider'
 import { Voting } from './voting.component'
@@ -120,6 +120,47 @@ const PlayerCard = (player: Player) => {
     )
 }
 
+
+
+const MissionChip = ({ summary }: { summary: boolean | undefined }) => {
+    const isSet = typeof summary === "boolean";
+    let backgroundColor = "grey";
+    if (isSet) {
+        backgroundColor = summary ? "blue" : "red";
+    }
+    const styles = {
+        backgroundColor
+    }
+    return (
+        <div style={styles} >
+            hi
+        </div>
+    )
+}
+
+const toStable = (obj: Object) => {
+    return Object.values(obj ? obj : {}).join()
+}
+const MissionSummaries = () => {
+    const ctx = useContext(GameContext);
+
+    const sum: (boolean | undefined)[] = Object.values<boolean | undefined>(ctx?.state?.missionSummaries ?? {})
+    const length = sum.length;
+
+    if (sum.length < 5) {
+        console.log()
+        for (let index = 0; index < 5 - length; index++) {
+            sum.push(undefined)
+        }
+    }
+
+    return (
+        <div style={{ width: '100%', display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
+            {sum.map(b => <MissionChip summary={b} />)}
+        </div>
+    )
+}
+
 export const InGame = () => {
     const ctx = useContext(GameContext);
     const voteAction = ctx.state.action === "vote";
@@ -133,6 +174,7 @@ export const InGame = () => {
                 display: 'flex',
                 flexDirection: 'column',
             }} >
+                <MissionSummaries />
                 <PlayersList players={Object.values(ctx.state.players).map(player => player)} />
                 <Voting open={voteAction} />
                 <Mission open={missionAction} />

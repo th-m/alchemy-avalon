@@ -1,7 +1,7 @@
 import React, { useReducer, createContext, Dispatch, useEffect } from "react";
 import { createGame, joinGame, TypedPathWrapper, typedPath } from "./firebase/actions";
 import firebase from "firebase";
-import { Players, Player, Characters, Game, GameStatus, Alignments, KnownCharacter, PlayerAction, GameMissionInfo, GamePaths } from "../../avalon-fire-functions/functions/src/connivance/schema";
+import { Players, Player, Characters, Game, GameStatus, Alignments, KnownCharacter, PlayerAction, GameMissionInfo, GamePaths, MissionsLog } from "../../avalon-fire-functions/functions/src/connivance/schema";
 
 export interface Character {
     characterName: keyof typeof Characters,
@@ -19,6 +19,9 @@ interface ContextState {
     setupStep: number;
     captain: Player;
     mission: GameMissionInfo;
+    missionSummaries: {
+        [roundNumber: string]: boolean;
+    }
     missionMembers: Players;
     activeMission: number;
     db: TypedPathWrapper<Game>;
@@ -82,9 +85,15 @@ interface AddMissionMember {
     type: "SET_MISSION_MEMBERS";
     payload: Players;
 }
+interface MissionSummaries {
+    type: "MISSION_SUMMARIES";
+    payload: {
+        [roundNumber: string]: boolean;
+    };
+}
 
 
-type Actions = AddCharacterToList | SetKeyString | SetCreator | SetPlayer | SetCharacter | AddPlayer | RemovePlayer | SetCaptain | UpdateMissionInfo | PlayerActionInfo | AddMissionMember
+type Actions = AddCharacterToList | SetKeyString | SetCreator | SetPlayer | SetCharacter | AddPlayer | RemovePlayer | SetCaptain | UpdateMissionInfo | PlayerActionInfo | AddMissionMember | MissionSummaries
 
 const spreadPlayers = (playerState: Players, player: Player) => ({ ...playerState, ...{ [player.uid]: player } })
 const removePlayer = (playerState: Players, player: Player) => Object.values(playerState)
@@ -119,6 +128,8 @@ function reducer(state: ContextState, action: Actions) {
             return { ...state, missionMembers: action.payload };
         case "PLAYER_ACTION":
             return { ...state, action: action.payload };
+        case "MISSION_SUMMARIES":
+            return { ...state, missionSummaries: action.payload };
         default:
             return state;
     }
@@ -142,6 +153,7 @@ const initState: ContextState = {
         memberCount: 0,
     },
     missionMembers: {},
+    missionSummaries: {},
     activeMission: 0,
     db: typedPath<GamePaths>().games['']
 }
@@ -269,6 +281,12 @@ export const GameProvider = ({ children }: Props) => {
         dispatch({ type: "PLAYER_ACTION", payload: action })
     }
 
+    const handleMissionSummaries = (action: {
+        [roundNumber: string]: boolean;
+    }) => {
+        dispatch({ type: "MISSION_SUMMARIES", payload: action })
+    }
+
     useEffect(() => {
         if (state.secret && state.setupStep >= 3) {
             const currentUser = firebase.auth().currentUser;
@@ -279,6 +297,7 @@ export const GameProvider = ({ children }: Props) => {
                 const missionListener = db.mission.$listen(handleMissionUpdate)
                 const missionMembersListener = db.missionMembers.$listen(handleMissionMembersUpdate);
                 const playerActionListener = db.playersActions[currentUser.uid].$listen(handlePlayerAction)
+                const missionSummaries = db.missionSummaries.$listen(handleMissionSummaries)
 
                 return () => {
                     characterListener.off()
