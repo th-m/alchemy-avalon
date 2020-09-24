@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { Paper, Typography, Avatar, Grow, Fab } from '@material-ui/core'
+import { Paper, Typography, Avatar, Grow } from '@material-ui/core'
 import { GameContext } from '../../provider'
 import { Player } from '../../schema';
 

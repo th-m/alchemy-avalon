@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react"
+import React, { useContext } from "react"
 import { usePlayerUtils } from './players'
 import { dev_getGame, setGameDev, testNextCaptain, setTeamVote, setMissionVote, setMissionMembers } from "../../firebase/actions";
 import stubGame from './stub.game.json'
@@ -16,15 +16,15 @@ export const DevUtils = () => {
     // const [uid, setUid] = useState("1");
 
 
-    const getGameData = async (secret: string) => {
-        const gameInfo = await dev_getGame(secret);
-        console.log({ gameInfo })
-        console.log(JSON.stringify(gameInfo))
-    }
+    // const getGameData = async (secret: string) => {
+    //     const gameInfo = await dev_getGame(secret);
+    //     console.log({ gameInfo })
+    //     console.log(JSON.stringify(gameInfo))
+    // }
 
-    const setGame = async (secret: string) => {
-        setGameDev(secret, stubGame);
-    }
+    // const setGame = async (secret: string) => {
+    //     setGameDev(secret, stubGame);
+    // }
 
     const setTeam = async () => {
         const c = ctx.state.mission.memberCount;

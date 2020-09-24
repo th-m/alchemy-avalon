@@ -1,5 +1,5 @@
 import React, { Component, useContext } from 'react'
-import { GameContext, GameProvider } from '../../provider'
+import { GameContext } from '../../provider'
 import { WaitingRoom } from './waiting-room.component'
 import { InGame } from './in-game.component'
 import { GameSecret } from './game-secret.component'

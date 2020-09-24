@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react'
-import { TextField, Button } from '@material-ui/core'
+import { TextField } from '@material-ui/core'
 import { GameContext } from '../../provider'
 import { cleanString } from '../../firebase/actions'
 import enterIcon from '../../assets/imgs/sacred-geometry/circles-svgrepo-com.svg'

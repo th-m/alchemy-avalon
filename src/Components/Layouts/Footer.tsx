@@ -1,5 +1,4 @@
 import React, { useContext } from 'react'
-import { Fab } from '@material-ui/core'
 import { GameContext } from '../../provider';
 import { startGame, setMissionMembers } from '../../firebase/actions';
 import logo from '../../assets/imgs/logo.svg';

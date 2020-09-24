@@ -1,12 +1,12 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { Paper, Typography, Avatar, Fade, Grow, Grid, Tab, IconButton, Tooltip, Icon } from '@material-ui/core'
+import React, { useContext } from 'react'
+import { Paper, Avatar, Grow, IconButton, Tooltip, Icon } from '@material-ui/core'
 import { GameContext } from '../../provider'
 import { Voting } from './voting.component'
 import { Mission } from './mission.component'
 import '../../App.css';
 import { Player } from '../../schema';
-import TouchAppIcon from '@material-ui/icons/TouchApp';
-import AddIcon from '@material-ui/icons/Add';
+// import TouchAppIcon from '@material-ui/icons/TouchApp';
+// import AddIcon from '@material-ui/icons/Add';
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import BadIcon from '@material-ui/icons/SentimentDissatisfied';
@@ -31,7 +31,7 @@ const PlayerCard = (player: Player) => {
     const playerCardStyle: React.CSSProperties = { marginBottom: 8, padding: 8, display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "flex-start", border: 'none' };
 
     const knows = ctx.state?.character?.knows || [];
-    const knownMatch = knows.find(known => known?.player?.uid == player.uid);
+    const knownMatch = knows.find(known => known?.player?.uid === player.uid);
 
 
     const isCaptain: boolean = ctx.state?.captain?.uid === firebase.auth().currentUser?.uid
@@ -138,9 +138,9 @@ const MissionChip = ({ summary }: { summary: boolean | undefined }) => {
     )
 }
 
-const toStable = (obj: Object) => {
-    return Object.values(obj ? obj : {}).join()
-}
+// const toStable = (obj: Object) => {
+//     return Object.values(obj ? obj : {}).join()
+// }
 const MissionSummaries = () => {
     const ctx = useContext(GameContext);
 

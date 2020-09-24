@@ -119,7 +119,7 @@ function _joinGame(gameKey: string, player?: Player | firebase.User) {
         });
 
         firebase.database().ref(`usersGames/${uid}/`).update({
-            gameID: gameKey, lastUpdated: (new Date).toISOString()
+            gameID: gameKey, lastUpdated: (new Date()).toISOString()
         });
     }
 }
@@ -153,7 +153,7 @@ export function createGame(gameKey: string) {
         });
 
         firebase.database().ref(`usersGames/${uid}/`).update({
-            gameID: gameKey, lastUpdated: (new Date).toISOString()
+            gameID: gameKey, lastUpdated: (new Date()).toISOString()
         });
     }
 }

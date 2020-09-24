@@ -1,7 +1,6 @@
 import { Player, Players } from '../../schema';
-import { joinGame, joinGameDev, dev_getCharacter } from '../../firebase/actions'
-import { auth } from '../../firebase/connect.firebase'
-import { to } from '../../utils';
+import { joinGameDev, dev_getCharacter } from '../../firebase/actions'
+
 const player1 = {
     displayName: "danny",
     email: "danny@p1.codes",
