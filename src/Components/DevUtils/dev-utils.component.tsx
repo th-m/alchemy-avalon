@@ -9,7 +9,7 @@ import firebase from "firebase";
 export const DevUtils = () => {
     const ctx = useContext(GameContext);
     const { havePlayersJoin, getCharacter } = usePlayerUtils()
-    if (process.env.REACT_APP_ENV !== 'local' && (firebase.auth()?.currentUser?.uid !== "VREPBESDUVXESwthMRF2osa028J3" || firebase.auth()?.currentUser?.uid !== "5tT31Ilz9GPSorWYnX79rnOTTtp2")) {
+    if (process.env.REACT_APP_ENV !== 'local' && (firebase.auth()?.currentUser?.uid === "VREPBESDUVXESwthMRF2osa028J3" || firebase.auth()?.currentUser?.uid === "5tT31Ilz9GPSorWYnX79rnOTTtp2")) {
         // Point to the RTDB emulator running on localhost.
         // In almost all cases the ns (namespace) is your project ID.
         return null;
