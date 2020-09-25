@@ -14,8 +14,11 @@ export enum httpPaths {
     missionMembers = '/mission/members',
     missionVote = '/vote/mission',
 }
+let base = 'https://us-central1-alchemy-f82c5.cloudfunctions.net'
+if (process.env.REACT_APP_ENV === 'local') {
+    base = 'http://localhost:5001/alchemy-f82c5/us-central1'
+}
 
-const base = 'http://localhost:5001/alchemy-f82c5/us-central1'
 const gameRoutes = '/connivance_api';
 
 const urlBase = base + gameRoutes
